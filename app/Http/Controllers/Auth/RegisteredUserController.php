@@ -43,8 +43,11 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Assign student role by default for new signups
+        $user->assignRole('student');
+
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('student.dashboard', absolute: false));
     }
 }

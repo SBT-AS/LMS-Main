@@ -1,0 +1,132 @@
+<!-- NavBar -->
+<section>
+  <nav class="sticky-top navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid px-lg-4">
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Logo (Mobile) -->
+      <a class="navbar-brand fw-bold mx-auto d-lg-none" href="index.html">
+        <span class="text-white">Educater</span>
+      </a>
+
+      <!-- Collapsible Content -->
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <!-- DESKTOP GRID -->
+        <div class="row w-100 align-items-center d-none d-lg-flex">
+          <!-- LEFT: Links -->
+          <div class="col-lg-4">
+            <ul class="navbar-nav flex-row gap-4">
+              <li class="nav-item">
+                <a class="nav-link" href="../pages/index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../pages/courses.html">Catalog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CENTER: Logo -->
+          <div class="col-lg-4 text-center">
+            <a class="navbar-brand fw-bold fs-3" href="index.html">
+              Educater
+            </a>
+          </div>
+
+          <!-- RIGHT: Auth -->
+          <div class="col-lg-4 text-end">
+            <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+              Log In
+            </button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
+              Get Started
+            </button>
+          </div>
+        </div>
+
+        <!-- MOBILE STACK -->
+        <div class="d-lg-none text-center mt-3">
+          <ul class="navbar-nav flex-column gap-2">
+            <li class="nav-item"><a class="nav-link" href="../pages/index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="../pages/courses.html">Catalog</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+          </ul>
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Log In</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</section>
+
+<!-- ================= AUTH MODALS ================= -->
+
+<!-- LOGIN MODAL -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <div class="d-flex justify-content-between mb-4">
+        <h3 class="mb-0 fw-bold">Welcome Back</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form>
+        <div class="mb-3">
+          <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+          <input type="email" class="form-control" placeholder="you@example.com">
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
+          <input type="password" class="form-control" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Log In</button>
+      </form>
+
+      <div class="auth-switch">
+        Don't have an account? <a data-bs-target="#signupModal" data-bs-toggle="modal" data-bs-dismiss="modal">Sign
+          Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <div class="d-flex justify-content-between mb-4">
+        <h3 class="mb-0 fw-bold">Create Account</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form>
+        <div class="mb-3">
+          <label class="form-label text-muted small text-uppercase fw-bold">Full Name</label>
+          <input type="text" class="form-control" placeholder="John Doe">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+          <input type="email" class="form-control" placeholder="you@example.com">
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
+          <input type="password" class="form-control" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Create Account</button>
+      </form>
+
+      <div class="auth-switch">
+        Already have an account? <a data-bs-target="#loginModal" data-bs-toggle="modal" data-bs-dismiss="modal">Log
+          In</a>
+      </div>
+    </div>
+  </div>
+</div>
