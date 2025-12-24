@@ -14,14 +14,13 @@
                         <i class="bi bi-lightning-fill me-1"></i> NEW: Interactive Quizzes
                     </span>
                     <h1 class="hero-title animate-words">
-                        Master <span class="text-gradient-green">Modern Engineering</span><br>
-                        <span class="text-gradient">By Building Real Apps.</span>
+                    Modern <span class="text-gradient-green">Learning Platform</span><br>
+                        <span class="text-gradient">Master Skills with Experts.</span>
                     </h1>
                 </div>
 
                 <p class="hero-subtitle mb-5 lead text-light">
-                    Stop watching tutorials. Start writing code. Join 10,000+ developers building their future with our project-based curriculum.
-                </p>
+                Learn Skills the Right Way – Hands-On, Project-Based, and Expert-Guided. Join 10,000+ Students Today.              </p>
 
                 <!-- Search Bar -->
                 <div class="hero-cta position-relative d-inline-block w-100" style="max-width: 480px;">
@@ -56,31 +55,29 @@
 
 <!-- TRUSTED BY SECTION -->
 <div class="container pb-5 mb-5 border-bottom border-secondary border-opacity-10">
-    <p class="text-center small text-muted text-uppercase fw-bold mb-4 tracking-wide">Trusted by engineering teams at</p>
-    <!-- Marquee scrolling logos -->
-    <div class="marquee-container w-100 py-3">
-        <div class="marquee-content">
-            <!-- Set 1 -->
-            <h4>Google</h4>
-            <h4>Microsoft</h4>
-            <h4>Spotify</h4>
-            <h4>Amazon</h4>
-            <h4>Netflix</h4>
-            <h4>Meta</h4>
-            <h4>Uber</h4>
-            <h4>Airbnb</h4>
-            <!-- Set 2 (Duplicate for seamless scroll) -->
-            <h4>Google</h4>
-            <h4>Microsoft</h4>
-            <h4>Spotify</h4>
-            <h4>Amazon</h4>
-            <h4>Netflix</h4>
-            <h4>Meta</h4>
-            <h4>Uber</h4>
-            <h4>Airbnb</h4>
+    <p class="text-center small text-muted text-uppercase fw-bold mb-4 tracking-wide">
+        Trusted by learners worldwide
+    </p>
+
+    <div class="marquee-container w-100 py-3 overflow-hidden position-relative">
+        <div class="marquee-content d-flex gap-5 align-items-center">
+            <h4>Programming</h4>
+            <h4>Web Development</h4>
+            <h4>Data Science</h4>
+            <h4>Machine Learning</h4>
+            <h4>UI/UX Design</h4>
+            <h4>Cybersecurity</h4>
+            <!-- Duplicate for smooth scroll -->
+            <h4>Artificial Intelligence</h4>
+            <h4>Mobile App Development</h4>
+            <h4>Business & Entrepreneurship</h4>
+            <h4>Finance & Accounting</h4>
+            <h4>Personal Development</h4>
+            <h4>Cybersecurity</h4>
         </div>
     </div>
 </div>
+
 
 <!-- How it works -->
 <section class="steps-section py-5 position-relative" id="how-it-works">
@@ -104,13 +101,13 @@
                         <p>Deep dive into theory with interactive diagrams that bring complex topics to life.</p>
                     </li>
 
-                    <li class="step-item">
-                        <span class="step-number">STEP 02</span>
+                    <li class="step-item active">
+                        <span class="step-number ">STEP 02</span>
                         <h4>Practice with Quizzes</h4>
                         <p>Test your knowledge with 500+ logic puzzles designed to reinforce your learning.</p>
                     </li>
 
-                    <li class="step-item">
+                    <li class="step-item active">
                         <span class="step-number">STEP 03</span>
                         <h4>Build Real Projects</h4>
                         <p>Create production-ready apps for your portfolio that prove your skills to employers.</p>
