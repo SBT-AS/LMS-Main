@@ -38,7 +38,7 @@
                             {{ Auth::user()->name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-surface); border: 1px solid var(--border-light);">
-                            <li><a class="dropdown-item text-white" href="{{ route('student.dashboard') }}">
+                            <li><a class="dropdown-item text-white" href="{{ Auth::user()->hasRole('admin') ? route('admin.dashboard') : route('student.dashboard') }}">
                                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
                             </a></li>
                             <li><a class="dropdown-item text-white" href="{{ route('student.certificates.index') }}">

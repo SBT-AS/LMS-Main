@@ -182,7 +182,7 @@
                     </div>
                     <h4 class="fw-bold mb-1">Aarav Sharma</h4>
                     <p class="text-accent small mb-3">Senior Developer @ Google</p>
-                    <p class="text-body small mb-3">Expert in MERN stack, system design, and cloud architecture.</p>
+                    <p class="text-body small text-muted mb-3">Expert in MERN stack, system design, and cloud architecture.</p>
 
                     <!-- Expertise Tags -->
                     <div class="d-flex flex-wrap gap-2 justify-content-center">
@@ -203,7 +203,7 @@
                     </div>
                     <h4 class="fw-bold mb-1">Priya Singh</h4>
                     <p class="text-accent small mb-3">AI/ML Engineer @ Microsoft</p>
-                    <p class="text-body small mb-3">Specializes in deep learning and natural language processing.</p>
+                    <p class="text-body small text-muted mb-3">Specializes in deep learning and natural language processing.</p>
 
                     <!-- Expertise Tags -->
                     <div class="d-flex flex-wrap gap-2 justify-content-center">

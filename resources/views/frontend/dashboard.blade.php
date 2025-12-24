@@ -291,7 +291,7 @@
                                             </div>
                                             <div class="course-img-wrapper" style="padding-top: 50%;">
                                             @if($course->image)
-                                                    <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
+                                                    <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}">
                                                 @else
                                                     <div class="d-flex align-items-center justify-content-center bg-light bg-opacity-5 h-100 w-100 position-absolute top-0 start-0">
                                                         <i class="bi bi-journal text-muted fs-1 opacity-50"></i>

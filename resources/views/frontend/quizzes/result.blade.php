@@ -46,9 +46,10 @@
 
             <h4 class="fw-bold mb-4 text-white">Review Your Answers</h4>
             @foreach($attempt->answers as $index => $answer)
-                <div class="card-glass p-4 mb-3 {{ $answer->is_correct ? 'border-success' : 'border-danger' }}" style="border-width: 0 0 0 4px!important;">
+                <div class="card-glass p-4 mb-3 review-card {{ $index === 0 ? 'active' : '' }} {{ $answer->is_correct ? 'border-success' : 'border-danger' }}" 
+                     style="border-width: 0 0 0 4px!important; display: {{ $index === 0 ? 'block' : 'none' }};" data-index="{{ $index }}">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h6 class="fw-bold mb-0 text-white">Question {{ $index + 1 }}</h6>
+                        <h6 class="fw-bold mb-0 text-white">Question {{ $index + 1 }} of {{ $attempt->answers->count() }}</h6>
                         @if($answer->is_correct)
                             <span class="badge bg-success bg-opacity-10 text-success"><i class="bi bi-check-circle me-1"></i> Correct</span>
                         @else
@@ -86,9 +87,46 @@
                             {{ $answer->question->explanation }}
                         </div>
                     @endif
+
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top border-light border-opacity-10">
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4 prev-review" {{ $index === 0 ? 'disabled' : '' }}>Previous</button>
+                        <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 next-review" {{ $index === $attempt->answers->count() - 1 ? 'disabled' : '' }}>Next</button>
+                    </div>
                 </div>
             @endforeach
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentReview = 0;
+        const totalReviews = {{ $attempt->answers->count() }};
+        const cards = document.querySelectorAll('.review-card');
+        const nextBtns = document.querySelectorAll('.next-review');
+        const prevBtns = document.querySelectorAll('.prev-review');
+
+        nextBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentReview < totalReviews - 1) {
+                    cards[currentReview].style.display = 'none';
+                    currentReview++;
+                    cards[currentReview].style.display = 'block';
+                }
+            });
+        });
+
+        prevBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentReview > 0) {
+                    cards[currentReview].style.display = 'none';
+                    currentReview--;
+                    cards[currentReview].style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
+@endpush
 @endsection
