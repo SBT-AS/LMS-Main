@@ -71,13 +71,19 @@ class StudentCourseController extends Controller
         }
 
         // Get adjacent materials for navigation
-        $previousMaterial = $materials->where('id', '<', $currentMaterial->id)->last();
-        $nextMaterial = $materials->where('id', '>', $currentMaterial->id)->first();
+        $previousMaterial = null;
+        $nextMaterial = null;
+        $progress = 0;
 
-        // Calculate progress percentage
-        $totalMaterials = $materials->count();
-        $currentMaterialIndex = $materials->values()->search(fn($m) => $m->id === $currentMaterial->id);
-        $progress = $totalMaterials > 0 ? round((($currentMaterialIndex + 1) / $totalMaterials) * 100) : 0;
+        if ($currentMaterial) {
+            $previousMaterial = $materials->where('id', '<', $currentMaterial->id)->last();
+            $nextMaterial = $materials->where('id', '>', $currentMaterial->id)->first();
+
+            // Calculate progress percentage
+            $totalMaterials = $materials->count();
+            $currentMaterialIndex = $materials->values()->search(fn($m) => $m->id === $currentMaterial->id);
+            $progress = $totalMaterials > 0 ? round((($currentMaterialIndex + 1) / $totalMaterials) * 100) : 0;
+        }
 
         return view('frontend.classroom', compact('course', 'materials', 'currentMaterial', 'previousMaterial', 'nextMaterial', 'progress'));
     }

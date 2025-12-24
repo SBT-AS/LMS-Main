@@ -69,12 +69,15 @@
                             @if($answer->question->$option)
                                 <div class="p-3 rounded-3 mb-2 small d-flex align-items-center
                                     @if($isCorrectOption) bg-success bg-opacity-10 text-success border border-success border-opacity-25
-                                    @elseif($isSelectedOption && !$isCorrectOption) bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25
-                                    @else bg-light bg-opacity-5 text-muted @endif">
-                                    <span class="me-3">{{ chr(64 + $i) }}.</span>
+                                    @elseif($isSelectedOption && !$isCorrectOption) bg-danger bg-opacity-10 border border-danger border-opacity-25
+                                    @else bg-light bg-opacity-5 text-muted @endif" 
+                                    @if($isSelectedOption && !$isCorrectOption) style="color: #dc3545 !important;" @endif>
+                                    <span class="me-3 fw-bold">{{ chr(64 + $i) }}.</span>
                                     <span class="flex-grow-1">{{ $answer->question->$option }}</span>
                                     @if($isCorrectOption)
-                                        <i class="bi bi-check-lg ms-2"></i>
+                                        <i class="bi bi-check-lg ms-2 text-success"></i>
+                                    @elseif($isSelectedOption && !$isCorrectOption)
+                                        <i class="bi bi-x-lg ms-2" style="color: #dc3545;"></i>
                                     @endif
                                 </div>
                             @endif
@@ -82,9 +85,12 @@
                     </div>
 
                     @if($answer->question->explanation)
-                        <div class="mt-3 p-3 bg-light bg-opacity-5 rounded-3 border-start border-primary border-3 small">
-                            <strong class="text-accent d-block mb-1"><i class="bi bi-info-circle me-1"></i> Explanation</strong>
-                            {{ $answer->question->explanation }}
+                        <div class="mt-4 p-3 rounded-3 small" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border-left: 4px solid #8b5cf6;">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-lightbulb-fill me-2" style="color: #fbbf24; font-size: 1.1rem;"></i>
+                                <strong style="color: #a78bfa;">Explanation</strong>
+                            </div>
+                            <p class="mb-0 text-light" style="line-height: 1.6;">{{ $answer->question->explanation }}</p>
                         </div>
                     @endif
 
