@@ -18,6 +18,10 @@ class StudentCourseController extends Controller
         $user = Auth::user();
         $isEnrolled = $user ? $user->courses->contains($course->id) : false;
 
+        if ($isEnrolled) {
+            return redirect()->route('student.courses.classroom', $slug);
+        }
+
         return view('frontend.course-detail', compact('course', 'isEnrolled'));
     }
 

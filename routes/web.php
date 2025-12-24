@@ -35,13 +35,14 @@ Route::post('/student-register', [StudentRegisterController::class, 'store'])
 |--------------------------------------------------------------------------
 */
 
+Route::get('/course/{slug}', [App\Http\Controllers\Frontend\StudentCourseController::class, 'show'])->name('student.courses.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/my-dashboard', [StudentDashboardController::class, 'index'])
         ->name('student.dashboard');
 
     // Student Course Routes
     Route::prefix('my-courses')->name('student.courses.')->group(function () {
-        Route::get('/{slug}', [App\Http\Controllers\Frontend\StudentCourseController::class, 'show'])->name('show');
         Route::get('/{slug}/classroom', [App\Http\Controllers\Frontend\StudentCourseController::class, 'classroom'])->name('classroom');
         Route::post('/{slug}/enroll', [App\Http\Controllers\Frontend\StudentCourseController::class, 'enroll'])->name('enroll');
         Route::post('/{slug}/finish', [App\Http\Controllers\Frontend\StudentCourseController::class, 'finish'])->name('finish');

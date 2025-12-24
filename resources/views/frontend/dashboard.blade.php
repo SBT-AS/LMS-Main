@@ -252,8 +252,8 @@
                                             <div class="progress-bar bg-primary" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ route('student.courses.show', $course->slug) }}" class="btn btn-primary flex-grow-1 rounded-pill py-2">Continue</a>
-                                        </div>
+                                             <a href="{{ route('student.courses.classroom', $course->slug) }}" class="btn btn-primary flex-grow-1 rounded-pill py-2">Continue</a>
+                                         </div>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +304,7 @@
                                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                                     <span class="text-success fw-bold small">FREE</span>
                                                     @if(in_array($course->id, $enrolledCourseIds))
-                                                        <a href="{{ route('student.courses.show', $course->slug) }}" class="btn btn-primary btn-sm rounded-pill px-3">
+                                                        <a href="{{ route('student.courses.classroom', $course->slug) }}" class="btn btn-primary btn-sm rounded-pill px-3">
                                                             <i class="bi bi-play-circle me-1"></i> Go to Course
                                                         </a>
                                                     @else

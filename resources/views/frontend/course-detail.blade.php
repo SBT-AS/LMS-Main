@@ -187,22 +187,28 @@
                     </div>
                 @else
                     <div class="d-flex gap-3">
-                        @if($course->price == 0)
-                            <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-primary btn-lg px-5">
-                                    <i class="bi bi-rocket-takeoff me-2"></i> Enroll for Free
-                                </button>
-                            </form>
+                        @guest
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-person-fill me-2"></i> Login to Enroll
+                            </a>
                         @else
-                            <form action="{{ route('cart.add') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="course_id" value="{{ $course->id }}">
-                                <button type="submit" class="btn btn-primary btn-lg px-5">
-                                    <i class="bi bi-cart-plus me-2"></i> Get Started Now
-                                </button>
-                            </form>
-                        @endif
+                            @if($course->price == 0)
+                                <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="bi bi-rocket-takeoff me-2"></i> Enroll for Free
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('cart.add') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="course_id" value="{{ $course->id }}">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="bi bi-cart-plus me-2"></i> Get Started Now
+                                    </button>
+                                </form>
+                            @endif
+                        @endguest
                     </div>
                 @endif
             </div>
@@ -354,22 +360,28 @@
                             <h5 class="text-body opacity-75 mb-1">One-time Investment</h5>
                             <span class="price-badge">₹{{ number_format($course->price, 0) }}</span>
                             
-@if($course->price == 0)
-                                <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST" class="mb-4">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary w-100 py-3 fs-5 shadow-lg">
-                                        <i class="bi bi-rocket-takeoff me-2"></i> Enroll for Free
-                                    </button>
-                                </form>
+                            @guest
+                                <a href="{{ route('login') }}" class="btn btn-primary w-100 py-3 fs-5 shadow-lg mb-4">
+                                    <i class="bi bi-person-fill me-2"></i> Login to Enroll
+                                </a>
                             @else
-                                <form action="{{ route('cart.add') }}" method="POST" class="mb-4">
-                                    @csrf
-                                    <input type="hidden" name="course_id" value="{{ $course->id }}">
-                                    <button type="submit" class="btn btn-primary w-100 py-3 fs-5 shadow-lg">
-                                        <i class="bi bi-lightning-charge-fill me-2"></i> Enroll Now
-                                    </button>
-                                </form>
-                            @endif
+                                @if($course->price == 0)
+                                    <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST" class="mb-4">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary w-100 py-3 fs-5 shadow-lg">
+                                            <i class="bi bi-rocket-takeoff me-2"></i> Enroll for Free
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('cart.add') }}" method="POST" class="mb-4">
+                                        @csrf
+                                        <input type="hidden" name="course_id" value="{{ $course->id }}">
+                                        <button type="submit" class="btn btn-primary w-100 py-3 fs-5 shadow-lg">
+                                            <i class="bi bi-lightning-charge-fill me-2"></i> Enroll Now
+                                        </button>
+                                    </form>
+                                @endif
+                            @endguest
                             
                             <p class="text-center small opacity-50">30-Day Happiness Guarantee</p>
                             <hr class="border-secondary border-opacity-25 my-4">
