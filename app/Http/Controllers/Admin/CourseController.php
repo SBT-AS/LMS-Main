@@ -80,30 +80,79 @@ class CourseController extends Controller
     ========================*/
     public function store(Request $request)
     {
-        
-        $request->validate([
+        /* =======================
+            VALIDATION RULES
+        ========================*/
+        $rules = [
             'title'       => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|boolean',
-        ]);
-
-
+        ];
+    
+        // ✅ Include Study Material = YES
+        if ($request->include_material == 1) {
+            $rules['materials'] = 'required|array|min:1';
+            $rules['materials.*.title'] = 'required|string|max:255';
+            $rules['materials.*.type'] = 'required|in:file,url';
+            $rules['materials.*.file'] = 'required_if:materials.*.type,file|file';
+            $rules['materials.*.url']  = 'required_if:materials.*.type,url|url';
+        }
+    
+        // ✅ Include Quiz = YES
+        if ($request->include_quiz == 1) {
+            $rules['quizzes'] = 'required|array|min:1';
+            $rules['quizzes.*.title'] = 'required|string|max:255';
+            $rules['quizzes.*.duration'] = 'required|integer|min:1';
+    
+            $rules['quizzes.*.questions'] = 'required|array|min:1';
+            $rules['quizzes.*.questions.*.text'] = 'required|string';
+            $rules['quizzes.*.questions.*.options'] = 'required|array|size:4';
+            $rules['quizzes.*.questions.*.correct'] = 'required|in:1,2,3,4';
+        }
+    
+        /* =======================
+            CUSTOM ATTRIBUTE NAMES
+            (THIS FIXES UGLY ERRORS)
+        ========================*/
+        $attributes = [
+            'title' => 'Course Title',
+            'category_id' => 'Category',
+            'price' => 'Price',
+            'status' => 'Status',
+    
+            'materials.*.title' => 'Material Title',
+            'materials.*.type' => 'Material Type',
+            'materials.*.file' => 'Material File',
+            'materials.*.url'  => 'Material URL',
+    
+            'quizzes.*.title' => 'Quiz Title',
+            'quizzes.*.duration' => 'Quiz Duration',
+            'quizzes.*.questions.*.text' => 'Question',
+            'quizzes.*.questions.*.options' => 'Question Options',
+            'quizzes.*.questions.*.correct' => 'Correct Answer',
+        ];
+    
+        $request->validate($rules, [], $attributes);
+    
+        /* =======================
+            STORE DATA
+        ========================*/
         try {
             DB::transaction(function () use ($request) {
-
+    
                 $image = null;
                 if ($request->hasFile('image')) {
                     $image = time().'_'.Str::random(8).'.'.$request->image->extension();
-                    $request->image->storeAs('courses',$image,'public');
+                    $request->image->storeAs('courses', $image, 'public');
                 }
-
+    
                 $video = null;
                 if ($request->hasFile('video')) {
                     $video = time().'_'.Str::random(8).'.'.$request->video->extension();
-                    $request->video->storeAs('courses',$video,'public');
+                    $request->video->storeAs('courses', $video, 'public');
                 }
-
+    
                 $course = Course::create([
                     'title'       => $request->title,
                     'slug'        => Str::slug($request->title).'-'.time(),
@@ -115,61 +164,58 @@ class CourseController extends Controller
                     'category_id' => $request->category_id,
                     'live_class'  => $request->live_class ?? 0,
                 ]);
-
+    
                 /* ===== MATERIALS ===== */
-                if ($request->include_material && $request->materials) {
+                if ($request->include_material == 1) {
                     foreach ($request->materials as $mat) {
-
                         $path = null;
-                        if ($mat['type']==='file' && isset($mat['file'])) {
-                            $path = $mat['file']->store('course-materials','public');
+                        if ($mat['type'] === 'file' && isset($mat['file'])) {
+                            $path = $mat['file']->store('course-materials', 'public');
                         }
-
+    
                         CourseMaterial::create([
-                            'course_id' => $course->id,
-                            'title'     => $mat['title'],
+                            'course_id'     => $course->id,
+                            'title'         => $mat['title'],
                             'material_type' => $mat['material_type'] ?? 'video',
-                            'type'      => $mat['type'],
-                            'file_path'=> $path,
-                            'url'       => $mat['type']==='url' ? $mat['url'] : null,
+                            'type'          => $mat['type'],
+                            'file_path'     => $path,
+                            'url'           => $mat['type'] === 'url' ? $mat['url'] : null,
                         ]);
                     }
                 }
-
+    
                 /* ===== QUIZZES ===== */
-                if ($request->include_quiz && $request->quizzes) {
+                if ($request->include_quiz == 1) {
                     foreach ($request->quizzes as $qz) {
-
+    
                         $quiz = Quiz::create([
                             'course_id'   => $course->id,
                             'title'       => $qz['title'],
                             'duration'    => $qz['duration'],
                             'instructions'=> $qz['instructions'] ?? null,
                         ]);
-
-                        if (isset($qz['questions']) && is_array($qz['questions'])) {
-                            foreach ($qz['questions'] as $qs) {
-                                QuizQuestion::create([
-                                    'quiz_id'        => $quiz->id,
-                                    'question'       => $qs['text'],
-                                    'option1'        => $qs['options'][1],
-                                    'option2'        => $qs['options'][2],
-                                    'option3'        => $qs['options'][3],
-                                    'option4'        => $qs['options'][4],
-                                    'correct_answer'=> $qs['correct'],
-                                    'explanation'   => $qs['explanation'] ?? null,
-                                ]);
-                            }
+    
+                        foreach ($qz['questions'] as $qs) {
+                            QuizQuestion::create([
+                                'quiz_id'        => $quiz->id,
+                                'question'       => $qs['text'],
+                                'option1'        => $qs['options'][1],
+                                'option2'        => $qs['options'][2],
+                                'option3'        => $qs['options'][3],
+                                'option4'        => $qs['options'][4],
+                                'correct_answer'=> $qs['correct'],
+                                'explanation'   => $qs['explanation'] ?? null,
+                            ]);
                         }
                     }
                 }
             });
-
+    
             return response()->json([
                 'success' => 'Course Added Successfully',
                 'url'     => route('admin.courses.index'),
             ]);
-
+    
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -177,6 +223,7 @@ class CourseController extends Controller
             ], 500);
         }
     }
+    
 
     public function edit(Course $course)
     {
@@ -193,34 +240,85 @@ class CourseController extends Controller
 =======================*/
 public function update(Request $request, Course $course)
 {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price'       => 'required|numeric|min:0',
-            'status'      => 'required|boolean',
-        ]);
+    /* =======================
+        VALIDATION RULES
+    ========================*/
+    $rules = [
+        'title'       => 'required|string|max:255',
+        'category_id' => 'required|exists:categories,id',
+        'price'       => 'required|numeric|min:0',
+        'status'      => 'required|boolean',
+    ];
 
+    // ✅ Include Study Material = YES
+    if ($request->include_material == 1) {
+        $rules['materials'] = 'required|array|min:1';
+        $rules['materials.*.title'] = 'required|string|max:255';
+        $rules['materials.*.type'] = 'required|in:file,url';
+        $rules['materials.*.file'] = 'required_if:materials.*.type,file|file';
+        $rules['materials.*.url']  = 'required_if:materials.*.type,url|url';
+    }
+
+    // ✅ Include Quiz = YES
+    if ($request->include_quiz == 1) {
+        $rules['quizzes'] = 'required|array|min:1';
+        $rules['quizzes.*.title'] = 'required|string|max:255';
+        $rules['quizzes.*.duration'] = 'required|integer|min:1';
+
+        $rules['quizzes.*.questions'] = 'required|array|min:1';
+        $rules['quizzes.*.questions.*.text'] = 'required|string';
+        $rules['quizzes.*.questions.*.options'] = 'required|array|size:4';
+        $rules['quizzes.*.questions.*.correct'] = 'required|in:1,2,3,4';
+    }
+
+    /* =======================
+        CLEAN ATTRIBUTE NAMES
+    ========================*/
+    $attributes = [
+        'title' => 'Course Title',
+        'category_id' => 'Category',
+        'price' => 'Price',
+        'status' => 'Status',
+
+        'materials.*.title' => 'Material Title',
+        'materials.*.type' => 'Material Type',
+        'materials.*.file' => 'Material File',
+        'materials.*.url'  => 'Material URL',
+
+        'quizzes.*.title' => 'Quiz Title',
+        'quizzes.*.duration' => 'Quiz Duration',
+        'quizzes.*.questions.*.text' => 'Question',
+        'quizzes.*.questions.*.options' => 'Question Options',
+        'quizzes.*.questions.*.correct' => 'Correct Answer',
+    ];
+
+    $request->validate($rules, [], $attributes);
+
+    /* =======================
+        UPDATE DATA
+    ========================*/
     try {
         DB::transaction(function () use ($request, $course) {
-            // Update image if provided
+
+            // Update image
             if ($request->hasFile('image')) {
                 if ($course->image) {
                     Storage::disk('public')->delete('courses/'.$course->image);
                 }
                 $course->image = time().'_'.Str::random(8).'.'.$request->image->extension();
-                $request->image->storeAs('courses',$course->image,'public');
+                $request->image->storeAs('courses', $course->image, 'public');
             }
 
-            // Update video if provided
+            // Update video
             if ($request->hasFile('video')) {
                 if ($course->video) {
                     Storage::disk('public')->delete('courses/'.$course->video);
                 }
                 $course->video = time().'_'.Str::random(8).'.'.$request->video->extension();
-                $request->video->storeAs('courses',$course->video,'public');
+                $request->video->storeAs('courses', $course->video, 'public');
             }
 
-            // Update basic course info
+            // Update course
             $course->update([
                 'title'       => $request->title,
                 'slug'        => Str::slug($request->title).'-'.time(),
@@ -232,42 +330,40 @@ public function update(Request $request, Course $course)
             ]);
 
             /* ===== MATERIALS ===== */
-            // Delete all existing materials first
             CourseMaterial::where('course_id', $course->id)->delete();
-            
-            if ($request->include_material == 1 && $request->materials) {
+
+            if ($request->include_material == 1) {
                 foreach ($request->materials as $mat) {
                     $path = null;
-                    
-                    // Check if it's a file upload
+
                     if (isset($mat['file']) && $mat['file'] instanceof \Illuminate\Http\UploadedFile) {
                         $path = $mat['file']->store('course-materials', 'public');
-                    } 
-                    // Check if it's an existing file (from edit)
-                    elseif (isset($mat['existing_file'])) {
+                    } elseif (isset($mat['existing_file'])) {
                         $path = $mat['existing_file'];
                     }
-                    
+
                     CourseMaterial::create([
-                        'course_id' => $course->id,
-                        'title'     => $mat['title'],
+                        'course_id'     => $course->id,
+                        'title'         => $mat['title'],
                         'material_type' => $mat['material_type'] ?? 'video',
-                        'type'      => $mat['type'],
-                        'file_path' => $mat['type'] === 'file' ? $path : null,
-                        'url'       => $mat['type'] === 'url' ? ($mat['url'] ?? null) : null,
+                        'type'          => $mat['type'],
+                        'file_path'     => $mat['type'] === 'file' ? $path : null,
+                        'url'           => $mat['type'] === 'url' ? ($mat['url'] ?? null) : null,
                     ]);
                 }
             }
 
             /* ===== QUIZZES ===== */
-            // Delete all existing quizzes and questions
-            QuizQuestion::whereIn('quiz_id', 
+            QuizQuestion::whereIn(
+                'quiz_id',
                 Quiz::where('course_id', $course->id)->pluck('id')
             )->delete();
+
             Quiz::where('course_id', $course->id)->delete();
-            
-            if ($request->include_quiz == 1 && $request->quizzes) {
+
+            if ($request->include_quiz == 1) {
                 foreach ($request->quizzes as $qz) {
+
                     $quiz = Quiz::create([
                         'course_id'   => $course->id,
                         'title'       => $qz['title'],
@@ -275,19 +371,17 @@ public function update(Request $request, Course $course)
                         'instructions'=> $qz['instructions'] ?? null,
                     ]);
 
-                    if (isset($qz['questions'])) {
-                        foreach ($qz['questions'] as $qs) {
-                            QuizQuestion::create([
-                                'quiz_id'        => $quiz->id,
-                                'question'       => $qs['text'],
-                                'option1'        => $qs['options'][1],
-                                'option2'        => $qs['options'][2],
-                                'option3'        => $qs['options'][3],
-                                'option4'        => $qs['options'][4],
-                                'correct_answer'=> $qs['correct'] ?? 1,
-                                'explanation'   => $qs['explanation'] ?? null,
-                            ]);
-                        }
+                    foreach ($qz['questions'] as $qs) {
+                        QuizQuestion::create([
+                            'quiz_id'        => $quiz->id,
+                            'question'       => $qs['text'],
+                            'option1'        => $qs['options'][1],
+                            'option2'        => $qs['options'][2],
+                            'option3'        => $qs['options'][3],
+                            'option4'        => $qs['options'][4],
+                            'correct_answer'=> $qs['correct'] ?? 1,
+                            'explanation'   => $qs['explanation'] ?? null,
+                        ]);
                     }
                 }
             }
@@ -305,6 +399,7 @@ public function update(Request $request, Course $course)
         ], 500);
     }
 }
+
 
     public function show(Course $course)
     {
