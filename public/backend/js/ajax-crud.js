@@ -238,21 +238,20 @@ const AjaxCrud = {
     select2: function (parent = 'body') {
         if ($.fn.select2) {
             const $parent = $(parent);
-            $('.init-select, .init_select2', $parent).each(function () {
+            $('select:not(.no-select2):not([name$="_length"])', $parent).each(function () {
                 const $this = $(this);
-                // Don't re-initialize
+                // Don't re-initialize if it's already initialized
                 if ($this.hasClass('select2-hidden-accessible')) return;
 
-                const isModal = $this.closest('.modal').length > 0;
+                const isModal = $this.closest('.modal').length > 0 || $this.closest('[role="dialog"]').length > 0;
 
                 $this.select2({
                     width: '100%',
-                    placeholder: $this.data('placeholder') || 'Select option',
+                    placeholder: $this.attr('placeholder') || $this.data('placeholder') || 'Select option',
                     allowClear: true,
-                    dropdownParent: isModal ? $this.closest('.modal') : null
+                    dropdownParent: isModal ? $this.closest('.modal, [role="dialog"]') : null
                 });
             });
         }
     }
 };
-

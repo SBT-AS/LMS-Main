@@ -15,8 +15,9 @@ $(document).ready(function () {
     if (typeof AjaxCrud !== 'undefined') {
         AjaxCrud.init();
     } else if ($.fn.select2) {
-        // Fallback if AjaxCrud is not loaded
-        $('.init-select, .init_select2').select2({
+        // Fallback if AjaxCrud is not loaded - Initialize a broader set of selects
+        // We exclude DataTables length menu and anything with .no-select2
+        $('select:not(.no-select2):not([name$="_length"])').select2({
             placeholder: "Select option",
             allowClear: true,
             width: '100%'

@@ -121,6 +121,17 @@ const CourseEditor = {
         `;
         container.appendChild(div);
         this.materialCount++;
+
+        // Initialize Select2 for new elements
+        if (typeof AjaxCrud !== 'undefined') {
+            AjaxCrud.select2(div);
+        } else if ($.fn.select2) {
+            $(div).find('select:not(.no-select2)').select2({
+                width: '100%',
+                placeholder: 'Select option',
+                allowClear: true
+            });
+        }
     },
 
     toggleMaterialInput: function (select) {
@@ -262,6 +273,17 @@ const CourseEditor = {
 
         this.quizCount++;
         this.questionCounts[nextIndex] = 1;
+
+        // Initialize Select2 for new elements
+        if (typeof AjaxCrud !== 'undefined') {
+            AjaxCrud.select2(div);
+        } else if ($.fn.select2) {
+            $(div).find('select:not(.no-select2)').select2({
+                width: '100%',
+                placeholder: 'Select option',
+                allowClear: true
+            });
+        }
     },
 
     removeQuiz: function (button) {
