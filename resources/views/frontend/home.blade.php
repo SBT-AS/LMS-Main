@@ -155,62 +155,102 @@
 </section>
 
 <!-- Meet Our Mentors Section -->
-<section class="mentors-section position-relative overflow-hidden py-5">
-    <div class="container position-relative" style="z-index: 1;">
-        <!-- Section Header -->
+<section class="mentors-pro-section py-5">
+    <div class="container">
+
         <div class="text-center mb-5">
-            <h2 class="fw-bold mb-3">
+            <h2 class="fw-bold">
                 Meet Your <span class="text-gradient-green">Expert Mentors</span>
             </h2>
-            <p class="text-muted mx-auto" style="max-width: 550px;">
-                Learn from industry veterans with real-world experience.
+            <p class="text-muted">
+                Learn directly from industry professionals
             </p>
         </div>
 
-        <!-- Mentors Grid -->
-        <div class="row g-4 justify-content-center mb-4">
+        <div class="row g-4">
+
             <!-- Mentor 1 -->
-            <div class="col-md-6 col-lg-5">
-                <div class="card-glass p-4 text-center h-100 mentor-card" style="transition: all 0.3s ease;">
-                    <div class="position-relative d-inline-block mb-3">
-                        <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #00dc82, #38bdf8); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 8px 20px rgba(0, 220, 130, 0.3);">
-                            <span style="font-size: 2rem; font-weight: bold; color: #000;">AS</span>
+            <div class="col-lg-4 col-md-6">
+                <div class="mentor-pro-card">
+                    <div class="mentor-top">
+                        <div class="mentor-img">
+                            <img src="{{ asset('frontend/assets/mentors/mentor1.jpg') }}" alt="Mentor">
                         </div>
                     </div>
-                    <h4 class="fw-bold mb-1">Aarav Sharma</h4>
-                    <p class="text-accent small mb-3">Senior Developer @ Google</p>
-                    <p class="text-body small text-muted mb-3">Expert in MERN stack, system design, and cloud architecture.</p>
 
-                    <!-- Expertise Tags -->
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">React</span>
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">Node.js</span>
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">AWS</span>
+                    <div class="mentor-body text-center">
+                        <h4>Michael Anderson</h4>
+                        <span class="mentor-role">Senior Developer @ Google</span>
+
+                        <p class="mentor-desc">
+                            Expert in MERN stack, system design and scalable cloud solutions.
+                        </p>
+
+                        <div class="mentor-skills">
+                            <span>React</span>
+                            <span>Node.js</span>
+                            <span>AWS</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Mentor 2 -->
-            <div class="col-md-6 col-lg-5">
-                <div class="card-glass p-4 text-center h-100 mentor-card" style="transition: all 0.3s ease;">
-                    <div class="position-relative d-inline-block mb-3">
-                        <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);">
-                            <span style="font-size: 2rem; font-weight: bold; color: #fff;">PS</span>
+            <div class="col-lg-4 col-md-6">
+                <div class="mentor-pro-card">
+                    <div class="mentor-top">
+                        <div class="mentor-img">
+                            <img src="{{ asset('frontend/assets/mentors/mentor2.jpg') }}" alt="Mentor">
                         </div>
                     </div>
-                    <h4 class="fw-bold mb-1">Priya Singh</h4>
-                    <p class="text-accent small mb-3">AI/ML Engineer @ Microsoft</p>
-                    <p class="text-body small text-muted mb-3">Specializes in deep learning and natural language processing.</p>
 
-                    <!-- Expertise Tags -->
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">Python</span>
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">TensorFlow</span>
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">AI/ML</span>
+                    <div class="mentor-body text-center">
+                        <h4>Ryan Mitchell</h4>
+                        <span class="mentor-role">AI Engineer @ Microsoft</span>
+
+                        <p class="mentor-desc">
+                            Specializes in AI, deep learning and real-world ML systems.
+                        </p>
+
+                        <div class="mentor-skills">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                            <span>AI / ML</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Mentor 3 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="mentor-pro-card">
+                    <div class="mentor-top">
+                        <div class="mentor-img">
+                            <img src="{{ asset('frontend/assets/mentors/mentor3.jpg') }}" alt="Mentor">
+                        </div>
+                    </div>
+
+                    <div class="mentor-body text-center">
+                        <h4>Rohit Kumar</h4>
+                        <span class="mentor-role">Backend Engineer @ Amazon</span>
+
+                        <p class="mentor-desc">
+                            Backend & microservices expert with large scale systems.
+                        </p>
+
+                        <div class="mentor-skills">
+                            <span>Java</span>
+                            <span>Spring</span>
+                            <span>Microservices</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </div>
+</section>
+
 
         <!-- Simple CTA -->
         <div class="text-center mt-4">
@@ -221,10 +261,86 @@
     </div>
 
     <style>
-        .mentor-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 220, 130, 0.2);
-        }
+       .mentors-pro-section {
+    background: transparent;
+}
+
+/* Card */
+.mentor-pro-card {
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.04),
+        rgba(255,255,255,0.02)
+    );
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.35s ease;
+    height: 100%;
+}
+
+.mentor-pro-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0, 220, 130, 0.18);
+}
+
+/* Top Image */
+.mentor-top {
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.mentor-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid rgba(0,220,130,0.4);
+}
+
+.mentor-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Body */
+.mentor-body {
+    padding: 0 28px 32px;
+}
+
+.mentor-body h4 {
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.mentor-role {
+    display: block;
+    font-size: 14px;
+    color: #22c55e;
+    margin-bottom: 14px;
+}
+
+.mentor-desc {
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* Skills */
+.mentor-skills span {
+    display: inline-block;
+    margin: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 999px;
+    background: rgba(34,197,94,0.12);
+    color: #22c55e;
+    border: 1px solid rgba(34,197,94,0.35);
+}
+
     </style>
 </section>
 @endsection
