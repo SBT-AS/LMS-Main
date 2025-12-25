@@ -88,6 +88,7 @@ class CourseController extends Controller
             'category_id' => 'required|exists:categories,id',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|boolean',
+            'live_class_link' => 'required_if:live_class,1|nullable|url',
         ];
     
         // ✅ Include Study Material = YES
@@ -95,8 +96,8 @@ class CourseController extends Controller
             $rules['materials'] = 'required|array|min:1';
             $rules['materials.*.title'] = 'required|string|max:255';
             $rules['materials.*.type'] = 'required|in:file,url';
-            $rules['materials.*.file'] = 'required_if:materials.*.type,file|file';
-            $rules['materials.*.url']  = 'required_if:materials.*.type,url|url';
+            $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400'; // Max 100MB
+            $rules['materials.*.url']  = 'required_if:materials.*.type,url|nullable|url';
         }
     
         // ✅ Include Quiz = YES
@@ -163,14 +164,19 @@ class CourseController extends Controller
                     'status'      => $request->status,
                     'category_id' => $request->category_id,
                     'live_class'  => $request->live_class ?? 0,
+                    'live_class_link' => $request->live_class_link,
                 ]);
     
                 /* ===== MATERIALS ===== */
-                if ($request->include_material == 1) {
-                    foreach ($request->materials as $mat) {
+                if ($request->include_material == 1 && $request->has('materials')) {
+                    foreach ($request->materials as $key => $mat) {
                         $path = null;
-                        if ($mat['type'] === 'file' && isset($mat['file'])) {
-                            $path = $mat['file']->store('course-materials', 'public');
+                        
+                        // Explicitly get the file from request to handle nested array uploads correctly
+                        $file = $request->file("materials.$key.file");
+
+                        if ($mat['type'] === 'file' && $file) {
+                            $path = $file->store('course-materials', 'public');
                         }
     
                         CourseMaterial::create([
@@ -179,7 +185,7 @@ class CourseController extends Controller
                             'material_type' => $mat['material_type'] ?? 'video',
                             'type'          => $mat['type'],
                             'file_path'     => $path,
-                            'url'           => $mat['type'] === 'url' ? $mat['url'] : null,
+                            'url'           => $mat['type'] === 'url' ? ($mat['url'] ?? null) : null,
                         ]);
                     }
                 }
@@ -248,6 +254,7 @@ public function update(Request $request, Course $course)
         'category_id' => 'required|exists:categories,id',
         'price'       => 'required|numeric|min:0',
         'status'      => 'required|boolean',
+        'live_class_link' => 'required_if:live_class,1|nullable|url',
     ];
 
     // ✅ Include Study Material = YES
@@ -255,8 +262,8 @@ public function update(Request $request, Course $course)
         $rules['materials'] = 'required|array|min:1';
         $rules['materials.*.title'] = 'required|string|max:255';
         $rules['materials.*.type'] = 'required|in:file,url';
-        $rules['materials.*.file'] = 'required_if:materials.*.type,file|file';
-        $rules['materials.*.url']  = 'required_if:materials.*.type,url|url';
+        $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400';
+        $rules['materials.*.url']  = 'required_if:materials.*.type,url|nullable|url';
     }
 
     // ✅ Include Quiz = YES
@@ -327,19 +334,25 @@ public function update(Request $request, Course $course)
                 'category_id' => $request->category_id,
                 'status'      => $request->status,
                 'live_class'  => $request->live_class ?? 0,
+                'live_class_link' => $request->live_class_link,
             ]);
 
             /* ===== MATERIALS ===== */
             CourseMaterial::where('course_id', $course->id)->delete();
 
-            if ($request->include_material == 1) {
-                foreach ($request->materials as $mat) {
+            if ($request->include_material == 1 && $request->has('materials')) {
+                foreach ($request->materials as $key => $mat) {
                     $path = null;
 
-                    if (isset($mat['file']) && $mat['file'] instanceof \Illuminate\Http\UploadedFile) {
-                        $path = $mat['file']->store('course-materials', 'public');
-                    } elseif (isset($mat['existing_file'])) {
-                        $path = $mat['existing_file'];
+                    // Handle file upload or existing file
+                    $file = $request->file("materials.$key.file");
+                    
+                    if ($mat['type'] === 'file') {
+                        if ($file) {
+                            $path = $file->store('course-materials', 'public');
+                        } elseif (isset($mat['existing_file'])) {
+                            $path = $mat['existing_file'];
+                        }
                     }
 
                     CourseMaterial::create([
@@ -347,7 +360,7 @@ public function update(Request $request, Course $course)
                         'title'         => $mat['title'],
                         'material_type' => $mat['material_type'] ?? 'video',
                         'type'          => $mat['type'],
-                        'file_path'     => $mat['type'] === 'file' ? $path : null,
+                        'file_path'     => $path,
                         'url'           => $mat['type'] === 'url' ? ($mat['url'] ?? null) : null,
                     ]);
                 }

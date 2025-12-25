@@ -16,19 +16,24 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::with('roles')->select(['id', 'name', 'email']);
+            $data = User::with('roles')->select(['id', 'name', 'email', 'status']);
 
             return datatables()->of($data)
                 ->addIndexColumn()
                 ->addColumn('roles', function ($user) {
                     return $user->getRoleNames()->implode(', ');
                 })
+                ->addColumn('status', function ($user) {
+                    $statusClass = $user->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                    $statusText = ucfirst($user->status);
+                    return '<span class="px-2.5 py-1 rounded-full text-xs font-medium ' . $statusClass . '">' . $statusText . '</span>';
+                })
                 ->addColumn('action', function ($data) {
                     return view('backend.layouts.action', compact('data'))
                         ->with('module', 'users')
                         ->with('module2', 'admin.users');
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
 
@@ -53,13 +58,15 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required'   
+            'roles' => 'required',
+            'status' => 'required|in:active,inactive'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => $request->status,
         ]);
 
         $user->assignRole($request->roles);
@@ -90,7 +97,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'roles' => 'required'
+            'roles' => 'required',
+            'status' => 'required|in:active,inactive'
         ]);
 
         $input = $request->all();

@@ -40,7 +40,12 @@ class CartController extends Controller
         }
 
         if (Auth::check()) {
-            Cart::updateOrCreate([
+            $exists = Cart::where('user_id', Auth::id())->where('course_id', $course->id)->exists();
+            if ($exists) {
+                return redirect()->back()->with('info', 'Course is already in your cart.');
+            }
+
+            Cart::create([
                 'user_id' => Auth::id(),
                 'course_id' => $course->id,
             ]);

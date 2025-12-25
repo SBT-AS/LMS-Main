@@ -3,104 +3,125 @@
 @section('title', 'Login | Educater')
 
 @section('content')
-<div class="container py-5">
-    <div class="row justify-content-center py-5">
-        <div class="col-md-5">
-            <div class="card-glass p-4 p-md-5">
-                <div class="text-center mb-5">
-                    <h2 class="text-gradient-green mb-2">Welcome Back</h2>
-                    <p class="text-muted">Sign in to continue your learning journey</p>
+<div class="container-fluid position-relative overflow-hidden min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <!-- Background Glows -->
+    <div class="position-absolute top-0 start-0 translate-middle rounded-circle"
+         style="width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 220, 130, 0.1) 0%, transparent 70%); filter: blur(100px); pointer-events: none;"></div>
+    <div class="position-absolute bottom-0 end-0 translate-middle rounded-circle"
+         style="width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 88, 202, 0.1) 0%, transparent 70%); filter: blur(100px); pointer-events: none;"></div>
+
+    <div class="row justify-content-center w-100 position-relative z-1">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+            <div class="card-glass border-0 rounded-4 overflow-hidden shadow-2xl">
+                <!-- Top Accent Bar -->
+                <div style="height: 4px; background: linear-gradient(90deg, var(--accent-color), #0a58ca);"></div>
+                
+                <div class="p-4 p-md-5">
+                    <div class="text-center mb-5">
+                        <div class="mb-3 d-inline-block">
+                            <span class="badge bg-accent bg-opacity-10 text-accent px-3 py-2 rounded-pill small fw-bold tracking-wider">SECURE ACCESS</span>
+                        </div>
+                        <h2 class="fw-bold text-white mb-2">Welcome Back</h2>
+                        <p class="text-muted">Sign in to continue your learning journey</p>
+                    </div>
+
+                    <!-- Session Status -->
+                    @if (session('status'))
+                        <div class="alert alert-success bg-accent bg-opacity-10 border-accent border-opacity-20 text-accent mb-4 rounded-3">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <!-- Email Address -->
+                        <div class="mb-4">
+                            <label for="email" class="form-label text-white-50 small fw-bold mb-2">EMAIL ADDRESS</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0 border-light text-white-50 ps-3">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
+                                    class="form-control border-start-0 ps-2 @error('email') is-invalid @enderror" placeholder="name@example.com">
+                            </div>
+                            @error('email')
+                                <div class="invalid-feedback d-block mt-2 small text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0 border-light text-white-50 ps-3">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input id="password" type="password" name="password" required autocomplete="current-password" 
+                                    class="form-control border-start-0 ps-2 @error('password') is-invalid @enderror" placeholder="••••••••">
+                            </div>
+                            @error('password')
+                                <div class="invalid-feedback d-block mt-2 small text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary py-3 rounded-3 fw-bold shadow-lg transform-hover">
+                                Log In <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-5">
+                            <p class="text-white-50 small">Don't have an account? 
+                                <a href="{{ route('register') }}" class="text-accent fw-bold text-decoration-none hover-underline">Sign Up Today</a>
+                            </p>
+                        </div>
+                    </form>
                 </div>
-
-                <!-- Session Status -->
-                @if (session('status'))
-                    <div class="alert alert-success bg-accent-dim text-accent border-accent-dim mb-4">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <!-- Email Address -->
-                    <div class="mb-4">
-                        <label for="email" class="form-label text-white small fw-bold">EMAIL ADDRESS</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
-                                <i class="bi bi-envelope"></i>
-                            </span>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
-                                class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror" placeholder="name@example.com">
-                        </div>
-                        @error('email')
-                            <div class="invalid-feedback d-block mt-1 small text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Password -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between">
-                            <label for="password" class="form-label text-white small fw-bold">PASSWORD</label>
-                            @if (Route::has('password.request'))
-                                <a class="small text-accent" href="{{ route('password.request') }}">
-                                    Forgot password?
-                                </a>
-                            @endif
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
-                                <i class="bi bi-lock"></i>
-                            </span>
-                            <input id="password" type="password" name="password" required autocomplete="current-password" 
-                                class="form-control border-start-0 ps-0 @error('password') is-invalid @enderror" placeholder="••••••••">
-                        </div>
-                        @error('password')
-                            <div class="invalid-feedback d-block mt-1 small text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="mb-4 d-flex align-items-center justify-content-between">
-                        <div class="form-check">
-                            <input id="remember_me" type="checkbox" class="form-check-input bg-transparent border-light" name="remember">
-                            <label for="remember_me" class="form-check-label text-muted small">Remember me</label>
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary py-3">
-                            Log In <i class="bi bi-arrow-right ms-2"></i>
-                        </button>
-                    </div>
-
-                    <div class="text-center mt-5">
-                        <p class="text-muted small">Don't have an account? 
-                            <a href="{{ route('register') }}" class="text-accent fw-bold">Sign Up Today</a>
-                        </p>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+    .card-glass {
+        background: rgba(13, 19, 33, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
     .input-group-text {
-        border-color: var(--border-light);
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.02) !important;
     }
     .form-control {
-        border-color: var(--border-light) !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
     }
     .form-control:focus {
+        background: rgba(255, 255, 255, 0.05) !important;
         border-color: var(--accent-color) !important;
+        box-shadow: 0 0 20px rgba(0, 220, 130, 0.1);
     }
-    .bg-accent-dim {
-        background: var(--accent-dim);
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.2) !important;
     }
-    .card-glass {
-        border: 1px solid var(--border-light);
-        background: var(--bg-surface);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    .transform-hover {
+        transition: all 0.3s ease;
+    }
+    .transform-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 220, 130, 0.2) !important;
+    }
+    .hover-underline:hover {
+        text-decoration: underline !important;
+    }
+    .shadow-2xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+    .tracking-wider {
+        letter-spacing: 0.05em;
     }
 </style>
 @endsection

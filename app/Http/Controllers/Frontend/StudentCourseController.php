@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Traits\GeneratesCertificate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentCourseController extends Controller
 {
+    use GeneratesCertificate;
     public function show($slug)
     {
         $course = Course::with(['category', 'materials', 'quizzes'])
@@ -41,7 +43,10 @@ class StudentCourseController extends Controller
             'status' => 'active'
         ]);
 
-        return redirect()->route('student.courses.classroom', $slug)
+        // Automatically generate certificate on enrollment (as requested)
+        $this->generateCertificate($user->id, $course->id);
+
+        return redirect()->route('student.dashboard')
             ->with('success', 'Successfully enrolled in the course!');
     }
 
@@ -104,12 +109,7 @@ class StudentCourseController extends Controller
             ->first();
 
         if (!$existing) {
-            \App\Models\Certificate::create([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'certificate_number' => 'CERT-' . strtoupper(str_shuffle(substr(md5(time() . $user->id), 0, 8))),
-                'issued_at' => now()
-            ]);
+            $this->generateCertificate($user->id, $course->id);
 
             // Update course status in pivot table
             $user->courses()->updateExistingPivot($course->id, ['status' => 'completed']);

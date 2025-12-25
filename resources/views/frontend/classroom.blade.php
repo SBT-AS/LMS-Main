@@ -11,17 +11,38 @@
         --glass-border: rgba(48, 54, 61, 0.6);
     }
 
+    /* Forcefully prevent selection on everything */
+    * {
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-user-drag: none;
+    }
+
     body {
         background-color: #06090f;
         color: #c9d1d9;
         overflow: hidden;
     }
 
+    /* Blur content when focused out (helps prevent some screenshot tools) */
+    .classroom-wrapper.content-protected {
+        filter: blur(20px);
+        pointer-events: none;
+    }
+
     /* Layout */
     .classroom-wrapper {
         display: flex;
-        height: calc(100vh - 80px); /* 80px is header height from layout */
+        height: calc(100vh - 80px);
         position: relative;
+        background: #06090f;
+    }
+
+    /* Hide footer on classroom page */
+    footer, .footer {
+        display: none !important;
     }
 
     /* Sidebar Styles */
@@ -36,7 +57,7 @@
     }
 
     .sidebar-header {
-        padding: 1.5rem;
+        padding: 1.75rem 1.5rem;
         background: rgba(13, 17, 23, 0.95);
         border-bottom: 1px solid var(--glass-border);
     }
@@ -50,7 +71,7 @@
     }
 
     .search-box {
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1.25rem;
         border-bottom: 1px solid var(--glass-border);
     }
 
@@ -82,7 +103,7 @@
     }
 
     .group-label {
-        padding: 0 1.5rem 0.5rem;
+        padding: 0 1.25rem 0.5rem;
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -98,7 +119,7 @@
     }
 
     .material-item {
-        padding: 0.85rem 1.5rem;
+        padding: 0.65rem 1.25rem;
         display: flex;
         align-items: center;
         text-decoration: none;
@@ -120,16 +141,16 @@
     }
 
     .material-item .item-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
         background: rgba(48, 54, 61, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 1rem;
+        margin-right: 0.85rem;
         transition: all 0.2s;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .material-item:hover .item-icon {
@@ -157,7 +178,7 @@
     .classroom-main {
         flex: 1;
         overflow-y: auto;
-        padding: 2.5rem;
+        padding: 3rem 2.5rem;
         background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 600px);
     }
 
@@ -167,12 +188,12 @@
     }
 
     .viewer-container {
-        border-radius: 20px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
         border: 1px solid var(--glass-border);
         background: #000;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         position: relative;
     }
 
@@ -198,21 +219,20 @@
     /* Typography & Cards */
     .lesson-meta-card {
         background: var(--glass-bg);
-        backdrop-filter: blur(12px);
         border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        padding: 2.5rem;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
     }
 
     .lesson-badge {
         display: inline-flex;
         align-items: center;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         letter-spacing: 0.5px;
     }
 
@@ -222,10 +242,10 @@
 
     .lesson-title-main {
         font-family: 'Outfit', sans-serif;
-        font-size: 2.2rem;
+        font-size: 1.75rem;
         font-weight: 700;
         color: #fff;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
     }
 
     .description-text {
@@ -238,7 +258,7 @@
     .nav-controls {
         display: flex;
         justify-content: space-between;
-        margin-top: 3rem;
+        margin-top: 2rem;
         gap: 1rem;
     }
 
@@ -298,17 +318,32 @@
     <!-- Sidebar -->
     <aside class="classroom-sidebar">
         <div class="sidebar-header">
-            <h6 class="text-white fw-bold mb-2 text-truncate">{{ $course->title }}</h6>
-            <div class="course-progress-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted fw-bold">PROGRESS</small>
-                    <small class="text-emerald fw-bold" style="color: #10b981">{{ $progress }}%</small>
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ route('student.dashboard') }}" class="text-muted text-decoration-none me-2">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h6 class="text-white fw-bold mb-0 text-truncate">{{ $course->title }}</h6>
+            </div>
+            <div class="course-progress-card py-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted fw-bold" style="font-size: 10px;">PROGRESS</small>
+                    <small class="text-emerald fw-bold" style="color: #10b981; font-size: 10px;">{{ $progress }}%</small>
                 </div>
-                <div class="progress" style="height: 6px; background: rgba(255,255,255,0.05);">
+                <div class="progress" style="height: 4px; background: rgba(255,255,255,0.05);">
                     <div class="progress-bar bg-success" style="width: {{ $progress }}%; border-radius: 10px; background-color: #10b981 !important;"></div>
                 </div>
             </div>
         </div>
+
+        @if($course->live_class && $course->live_class_link)
+        <div class="px-4 py-2" style="background: rgba(239, 68, 68, 0.1); border-bottom: 1px solid rgba(239, 68, 68, 0.2);">
+            <a href="{{ $course->live_class_link }}" target="_blank" 
+               class="btn btn-danger btn-sm w-100 fw-bold d-flex align-items-center justify-content-center py-2" 
+               style="border-radius: 8px; font-size: 0.8rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">
+                <i class="bi bi-broadcast me-2"></i> JOIN LIVE NOW
+            </a>
+        </div>
+        @endif
 
         <div class="search-box">
             <input type="text" class="search-input" id="materialSearch" placeholder="Search lessons, docs...">
@@ -396,8 +431,8 @@
                              <iframe src="{{ asset('storage/' . $currentMaterial->file_path) }}#toolbar=0" width="100%" height="100%" style="border: none;"></iframe>
                         </div>
                     @elseif($currentMaterial->material_type == 'image')
-                        <div class="text-center p-4">
-                            <img src="{{ asset('storage/' . $currentMaterial->file_path) }}" class="img-fluid rounded-4 shadow-lg" alt="{{ $currentMaterial->title }}">
+                        <div class="text-center p-4 d-flex align-items-center justify-content-center" style="min-height: 500px; background: rgba(0,0,0,0.3);">
+                            <img src="{{ asset('storage/' . $currentMaterial->file_path) }}" class="img-fluid rounded-3 shadow-lg" style="max-height: 450px; width: auto;" alt="{{ $currentMaterial->title }}">
                         </div>
                     @else
                         <div class="text-center py-5">
@@ -415,29 +450,14 @@
 
                 <!-- Info Card -->
                 <div class="lesson-meta-card">
-                    <span class="lesson-badge badge-{{ $currentMaterial->material_type }}">
-                        <i class="bi bi-{{ $currentMaterial->material_type == 'video' ? 'play-circle' : ($currentMaterial->material_type == 'pdf' ? 'file-pdf' : 'link-45deg') }} me-2"></i>
-                        {{ strtoupper($currentMaterial->material_type) }}
-                    </span>
-                    <h1 class="lesson-title-main">{{ $currentMaterial->title }}</h1>
-                    
-                    <div class="d-flex align-items-center mb-4 pb-4 border-bottom border-white border-opacity-10">
-                        <div class="d-flex align-items-center">
-                            <img src="https://ui-avatars.com/api/?name=Educater&background=10b981&color=fff" class="rounded-circle me-3" width="45" height="45">
-                            <div>
-                                <div class="text-white fw-bold">Educater Academy</div>
-                                <div class="text-muted small">Updated {{ $currentMaterial->updated_at->diffForHumans() }}</div>
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="lesson-badge badge-{{ $currentMaterial->material_type }}">
+                                <i class="bi bi-{{ $currentMaterial->material_type == 'video' ? 'play-circle' : ($currentMaterial->material_type == 'pdf' ? 'file-pdf' : 'link-45deg') }} me-2"></i>
+                                {{ strtoupper($currentMaterial->material_type) }}
+                            </span>
+                            <h1 class="lesson-title-main mb-0">{{ $currentMaterial->title }}</h1>
                         </div>
-                    </div>
-
-                    <div class="description-text">
-                        <p>Welcome to this module. In this section, we cover <strong>{{ $currentMaterial->title }}</strong> in detail. Please ensure you have your workspace ready if this is a practical lesson.</p>
-                        <ul class="mt-4 list-unstyled">
-                            <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> High quality learning content</li>
-                            <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> Practical examples and use cases</li>
-                            <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> Downloadable resources included</li>
-                        </ul>
                     </div>
 
                     <!-- Navigation Controls -->
@@ -513,6 +533,94 @@
         if (activeItem) {
             activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+
+        // --- Security Features: Prevent Copy & Screenshots ---
+        
+        const showSecurityPopup = (message) => {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Security Alert',
+                    text: message,
+                    confirmButtonColor: '#10b981',
+                    background: '#0d1117',
+                    color: '#fff'
+                });
+            } else {
+                alert(message);
+            }
+        };
+
+        // Disable right click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showSecurityPopup('Right-click is disabled to protect course content.');
+        });
+
+        // Disable keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if (
+                e.keyCode === 123 || 
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || 
+                (e.ctrlKey && e.keyCode === 85) ||
+                (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 83)) // Ctrl+C, Ctrl+V, Ctrl+S
+            ) {
+                e.preventDefault();
+                showSecurityPopup('Keyboard shortcuts for copying or inspection are disabled.');
+                return false;
+            }
+
+            // PrintScreen Detection (Limited)
+            if (e.key === 'PrintScreen') {
+                navigator.clipboard.writeText('');
+                showSecurityPopup('Screenshots are discouraged. Please focus on learning!');
+            }
+        });
+
+        // Detect PrintScreen (Modern Browsers)
+        window.addEventListener('keyup', function(e) {
+            if (e.key === 'PrintScreen') {
+                navigator.clipboard.writeText('');
+                showSecurityPopup('Screenshots are disabled.');
+            }
+        });
+
+        // Prevent Dragging images
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('dragstart', (e) => e.preventDefault());
+        });
+
+        // Prevent Copy/Cut events directly
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            showSecurityPopup('Copying content is not allowed.');
+        });
+
+        document.addEventListener('cut', (e) => {
+            e.preventDefault();
+            showSecurityPopup('Cutting content is not allowed.');
+        });
+
+        // Detect window blur (when user switches tabs or uses screenshot tools)
+        const wrapper = document.querySelector('.classroom-wrapper');
+        
+        window.addEventListener('blur', () => {
+            wrapper.classList.add('content-protected');
+        });
+
+        window.addEventListener('focus', () => {
+            wrapper.classList.remove('content-protected');
+        });
+
+        // Prevent printing
+        window.onbeforeprint = () => {
+            wrapper.classList.add('content-protected');
+            return false;
+        };
+        window.onafterprint = () => {
+            wrapper.classList.remove('content-protected');
+        };
     });
 </script>
 @endpush

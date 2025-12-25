@@ -8,7 +8,9 @@
         @endif
         <!-- Play Overlay -->
         <div class="play-overlay">
-            <a href="{{ route('student.courses.show', $course->slug) }}" class="btn-play">
+            <a href="{{ route('student.courses.show', $course->slug) }}" 
+               class="btn-play" 
+               @guest onclick="event.preventDefault(); showLoginAlert();" @endguest>
                 <i class="bi bi-play-fill"></i>
             </a>
         </div>
@@ -20,7 +22,9 @@
             <span class="badge-float">{{ $course->category->name }}</span>
         @endif
         
-        <a href="{{ route('student.courses.show', $course->slug) }}" class="text-white">
+        <a href="{{ route('student.courses.show', $course->slug) }}" 
+           class="text-white"
+           @guest onclick="event.preventDefault(); showLoginAlert();" @endguest>
             <h4>{{ $course->title }}</h4>
         </a>
         
@@ -40,7 +44,7 @@
         
         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
             <div class="course-price-tag">
-                @if($course->price)
+                @if($course->price && $course->price > 0)
                     ₹{{ number_format($course->price, 0) }}
                 @else
                     Free
@@ -49,7 +53,20 @@
             
             @auth
                 @if(Auth::user()->courses->contains($course->id))
-                    <span class="badge bg-success">Enrolled</span>
+                    <a href="{{ route('student.dashboard') }}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                    </a>
+                @elseif($course->price <= 0)
+                    <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                            <i class="bi bi-gift me-1"></i> Free
+                        </button>
+                    </form>
+                @elseif(App\Models\Cart::isInCart($course->id))
+                    <a href="{{ route('cart.index') }}" class="btn btn-sm btn-info rounded-pill px-3">
+                        <i class="bi bi-cart-check me-1"></i> In Cart
+                    </a>
                 @else
                     <form action="{{ route('cart.add') }}" method="POST" style="display: inline;">
                         @csrf
@@ -60,9 +77,23 @@
                     </form>
                 @endif
             @else
-                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                    <i class="bi bi-cart-plus me-1"></i> Add
-                </a>
+                @if($course->price <= 0)
+                    <a href="{{ route('login') }}" 
+                       class="btn btn-sm btn-outline-info rounded-pill px-3"
+                       onclick="event.preventDefault(); showLoginAlert();">
+                        <i class="bi bi-gift me-1"></i> Free
+                    </a>
+                @elseif(App\Models\Cart::isInCart($course->id))
+                    <a href="{{ route('cart.index') }}" class="btn btn-sm btn-info rounded-pill px-3">
+                        <i class="bi bi-cart-check me-1"></i> In Cart
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" 
+                       class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                       onclick="event.preventDefault(); showLoginAlert();">
+                        <i class="bi bi-cart-plus me-1"></i> Add
+                    </a>
+                @endif
             @endauth
         </div>
     </div>

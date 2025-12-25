@@ -17,22 +17,30 @@
                     <a class="nav-link" href="{{ route('frontend.home') }}#courses">Courses</a>
                     
                 </li>
-                @auth
-                    <li class="nav-item">
-                      <a class="nav-link" href="{{ route('frontend.home') }}#footer">About</a>
-                    </li>
-                @endauth
             </ul>
             
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-3 align-items-center">
+                @php
+                    $cartCount = 0;
+                    if (Auth::check()) {
+                        $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count();
+                    } else {
+                        $cartCount = session()->has('cart') ? count(session('cart')) : 0;
+                    }
+                @endphp
+
+                <a href="{{ route('cart.index') }}" class="btn btn-outline-primary position-relative border-0 p-2">
+                    <i class="bi bi-cart3 fs-5"></i>
+                    @if($cartCount > 0)
+                       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-white fw-bold"
+      style="background-color:#ff0000; font-size:0.7rem; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center; transform: translate(-50%, -10%) !important;">
+    {{ $cartCount }}
+</span>
+
+                    @endif
+                </a>
+                
                 @auth
-                    <a href="{{ route('cart.index') }}" class="btn btn-outline-primary position-relative border-0">
-                        <i class="bi bi-cart3 fs-5"></i>
-                        @if(session()->has('cart') && count(session('cart')) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-accent border border-light rounded-circle" 
-                                  style="width:10px; height:10px; background:var(--accent-color)"></span>
-                        @endif
-                    </a>
                     <div class="dropdown">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             {{ Auth::user()->name }}

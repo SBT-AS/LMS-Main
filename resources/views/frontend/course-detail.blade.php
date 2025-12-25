@@ -185,6 +185,15 @@
                             <i class="bi bi-check-circle-fill me-1"></i> You are enrolled
                         </span>
                     </div>
+                @elseif(App\Models\Cart::isInCart($course->id))
+                    <div class="d-flex gap-3 align-items-center">
+                        <a href="{{ route('cart.index') }}" class="btn btn-info btn-lg px-5">
+                            <i class="bi bi-cart-check me-2"></i> Already in Cart
+                        </a>
+                        <span class="text-info small fw-bold">
+                            <i class="bi bi-info-circle-fill me-1"></i> Continue to Checkout
+                        </span>
+                    </div>
                 @else
                     <div class="d-flex gap-3">
                         @guest

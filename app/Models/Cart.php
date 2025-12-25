@@ -18,4 +18,16 @@ class Cart extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public static function isInCart($courseId)
+    {
+        if (\Illuminate\Support\Facades\Auth::check()) {
+            return self::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('course_id', $courseId)
+                ->exists();
+        } else {
+            $cart = session()->get('cart', []);
+            return isset($cart[$courseId]);
+        }
+    }
 }

@@ -222,18 +222,21 @@
                     </div>
                 </div>
 
-                @if($enrolledCourses->count() > 0)
+                @if($enrolledCourses->count() > 0 || $freeCourses->count() > 0)
                     <div class="row g-4 mb-5">
+                        {{-- Show enrolled courses --}}
                         @foreach($enrolledCourses as $course)
                             <div class="col-md-6 col-lg-4">
                                 <div class="card course-card-dashboard shadow-sm h-100">
                                     <div class="course-img-wrapper">
-                                         @if($course->image)
-                                            <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
-                                        @else
-                                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                                                alt="{{ $course->title ?? 'Course' }}">
-                                        @endif
+                                        <a href="{{ route('student.courses.classroom', $course->slug) }}">
+                                            @if($course->image)
+                                                <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}">
+                                            @else
+                                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                                                    alt="{{ $course->title ?? 'Course' }}">
+                                            @endif
+                                        </a>
                                         <div class="position-absolute top-0 end-0 m-2">
                                             @if($course->pivot->status == 'completed')
                                                 <span class="badge bg-success text-white shadow-sm rounded-pill"><i class="bi bi-check-circle me-1"></i> Completed</span>
@@ -243,7 +246,9 @@
                                         </div>
                                     </div>
                                     <div class="card-body p-4">
-                                        <h6 class="fw-bold text-white text-truncate mb-2" title="{{ $course->title }}">{{ $course->title }}</h6>
+                                        <a href="{{ route('student.courses.classroom', $course->slug) }}" class="text-decoration-none">
+                                            <h6 class="fw-bold text-white text-truncate mb-2" title="{{ $course->title }}">{{ $course->title }}</h6>
+                                        </a>
                                         <div class="d-flex align-items-center justify-content-between mb-3 text-muted">
                                             <small>35% Complete</small>
                                             <small><i class="bi bi-play-circle me-1"></i> {{ $course->videoMaterials()->count() }} Lessons</small>
@@ -258,6 +263,38 @@
                                 </div>
                             </div>
                         @endforeach
+
+                        {{-- Show free courses not yet enrolled --}}
+                        @foreach($freeCourses as $course)
+                            @if(!in_array($course->id, $enrolledCourseIds))
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card course-card-dashboard shadow-sm h-100">
+                                        <div class="course-img-wrapper">
+                                            @if($course->image)
+                                                <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}">
+                                            @else
+                                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                                                    alt="{{ $course->title ?? 'Course' }}">
+                                            @endif
+                                            <div class="position-absolute top-0 start-0 m-2">
+                                                <span class="badge bg-success shadow-sm rounded-pill">Free</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <h6 class="fw-bold text-white text-truncate mb-2" title="{{ $course->title }}">{{ $course->title }}</h6>
+                                            <p class="small text-muted mb-4 line-clamp-2" style="height: 40px; overflow: hidden;">{{ Str::limit($course->description, 70) }}</p>
+                                            
+                                            <form action="{{ route('student.courses.enroll', $course->slug) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success w-100 rounded-pill py-2">
+                                                    <i class="bi bi-play-circle me-1"></i> Access Now
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
                 @else
                     <div class="text-center py-5 mb-5 card-glass">
@@ -271,54 +308,6 @@
                         <a href="{{ route('frontend.home') }}#courses" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
                             <i class="bi bi-search me-2"></i> Browse Courses
                         </a>
-                    </div>
-                @endif
-                
-                <!-- Recommended/Free Courses -->
-                @if($freeCourses->count() > 0)
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 bg-surface" style="border: 1px solid var(--border-light)!important;">
-                         <div class="card-header bg-transparent border-0 py-3 px-4 d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold m-0 text-white"><i class="bi bi-stars text-warning me-2"></i>Recommended Free Courses</h5>
-                            <a href="{{ route('frontend.home') }}#courses" class="text-decoration-none small fw-semibold">View All</a>
-                         </div>
-                         <div class="card-body p-4 bg-transparent">
-                            <div class="row g-4">
-                                @foreach($freeCourses as $course)
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="card course-card-dashboard shadow-sm h-100 bg-surface">
-                                            <div class="position-absolute top-0 start-0 m-2 z-1">
-                                                <span class="badge bg-success shadow-sm">Free</span>
-                                            </div>
-                                            <div class="course-img-wrapper" style="padding-top: 50%;">
-                                            @if($course->image)
-                                                    <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}">
-                                                @else
-                                                    <div class="d-flex align-items-center justify-content-center bg-light bg-opacity-5 h-100 w-100 position-absolute top-0 start-0">
-                                                        <i class="bi bi-journal text-muted fs-1 opacity-50"></i>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="card-body p-3">
-                                                <h6 class="fw-bold text-white text-truncate mb-1">{{ $course->title }}</h6>
-                                                <p class="small text-muted mb-2 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ Str::limit($course->description, 60) }}</p>
-                                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                                    <span class="text-success fw-bold small">FREE</span>
-                                                    @if(in_array($course->id, $enrolledCourseIds))
-                                                        <a href="{{ route('student.courses.classroom', $course->slug) }}" class="btn btn-primary btn-sm rounded-pill px-3">
-                                                            <i class="bi bi-play-circle me-1"></i> Go to Course
-                                                        </a>
-                                                    @else
-                                                        <a href="{{ route('student.courses.show', $course->slug) }}" class="btn btn-success btn-sm rounded-pill px-3">
-                                                            <i class="bi bi-play-circle me-1"></i> Access Now
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                         </div>
                     </div>
                 @endif
 

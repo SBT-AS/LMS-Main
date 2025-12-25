@@ -17,6 +17,7 @@ class Course extends Model
         'video',
         'price',
         'live_class',
+        'live_class_link',
         'status',
         'category_id',
     ];

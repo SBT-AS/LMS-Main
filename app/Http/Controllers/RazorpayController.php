@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use App\Models\Cart;
 use App\Models\Course;
+use App\Traits\GeneratesCertificate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RazorpayController extends Controller
 {
+    use GeneratesCertificate;
     public function index()
     {
         $cartItems = Cart::with('course')
@@ -64,6 +66,9 @@ class RazorpayController extends Controller
                                     'status' => 'active',
                                     'enrolled_at' => now()
                                 ]);
+
+                                // Automatically generate certificate on purchase
+                                $this->generateCertificate($user->id, $item->course_id);
                             }
                         }
                         // Clear the cart

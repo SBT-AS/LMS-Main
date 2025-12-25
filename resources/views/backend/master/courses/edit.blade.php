@@ -152,7 +152,7 @@
                         <label class="input-label">
                             Live Class Available
                         </label>
-                        <select name="live_class" class="input-field appearance-none" style="background-image: none;">
+                        <select name="live_class" id="liveClassSelect" class="input-field appearance-none" style="background-image: none;" onchange="toggleLiveLink()">
                             <option value="0" {{ old('live_class', $course->live_class) == '0' ? 'selected' : '' }}>No</option>
                             <option value="1" {{ old('live_class', $course->live_class) == '1' ? 'selected' : '' }}>Yes</option>
                         </select>
@@ -182,6 +182,33 @@
                             <option value="1" {{ $course->quizzes->isNotEmpty() ? 'selected' : '' }}>Yes</option>
                         </select>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Live Class Details (Dynamic) -->
+        <div id="liveLinkSection" class="form-section {{ old('live_class', $course->live_class) == '1' ? '' : 'hidden' }}">
+            <div class="section-header">
+                <i class="bi bi-camera-video"></i>
+                <div>
+                    <h3 class="font-semibold text-lg">Live Class Details</h3>
+                    <p class="text-sm opacity-90">Manage your live lecture links</p>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="input-group mb-0">
+                    <label class="input-label">
+                        Live Class Link (Zoom/Google Meet/etc.) <span class="required">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="bi bi-link-45deg"></i>
+                        </span>
+                        <input type="url" name="live_class_link" class="input-field pl-10" 
+                               placeholder="https://meet.google.com/abc-defg-hij"
+                               value="{{ old('live_class_link', $course->live_class_link) }}">
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">Enter the full URL where students will join the session.</p>
                 </div>
             </div>
         </div>
@@ -441,6 +468,16 @@
         document.getElementById('imagePreview').classList.add('hidden');
         document.querySelector('#imagePreview img').src = '';
         // If editing, you might want to show the current image again or just leave blank to not update
+    }
+
+    function toggleLiveLink() {
+        const select = document.getElementById('liveClassSelect');
+        const linkSection = document.getElementById('liveLinkSection');
+        if (select.value === '1') {
+            linkSection.classList.remove('hidden');
+        } else {
+            linkSection.classList.add('hidden');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {

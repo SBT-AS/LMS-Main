@@ -30,9 +30,12 @@
                                     <form action="{{ route('cart.destroy', $course->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="cart-remove-btn btn btn-sm btn-link text-danger">
-                                            <i class="bi bi-trash me-1"></i> Remove
-                                        </button>
+                                       <button type="submit"
+    class="btn btn-sm d-flex align-items-center gap-1 text-danger border border-danger rounded-pill px-3 py-1 cart-remove-btn">
+    <i class="bi bi-trash"></i>
+    <span>Remove</span>
+</button>
+
                                     </form>
                                 </div>
                             </div>

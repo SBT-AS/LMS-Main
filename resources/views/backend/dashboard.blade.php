@@ -2,126 +2,136 @@
 
 @section('title', 'Dashboard')
 
-@section('header_title', 'Dashboard Overview')
-
 @section('content')
-<div class="space-y-6">
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Students -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 transition-all hover:shadow-md">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
-                    <i class="bi bi-people-fill text-2xl"></i>
-                </div>
-                <span class="flex items-center text-xs font-semibold text-green-500 bg-green-50 px-2.5 py-0.5 rounded-full">
-                    <i class="bi bi-arrow-up-short mr-1"></i> 12%
-                </span>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Total Students</h3>
-                <div class="flex items-baseline gap-2">
-                    <h4 class="text-3xl font-bold text-gray-900">{{ number_format($total_students) }}</h4>
-                </div>
-            </div>
+<div class="space-y-8 animate-in fade-in duration-500">
+    <!-- Welcome Header -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-violet-700 p-8 text-white shadow-lg">
+        <div class="relative z-10">
+            <h1 class="text-3xl font-bold mb-2">Welcome Back, {{ auth()->user()->name }}! 👋</h1>
+            <p class="text-indigo-100 max-w-xl">Your learning ecosystem is thriving. You have <span class="font-bold text-white">{{ $total_students }}</span> students enrolled across <span class="font-bold text-white">{{ $total_courses }}</span> active courses.</p>
         </div>
-
-        <!-- Total Courses -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 transition-all hover:shadow-md">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
-                    <i class="bi bi-book-half text-2xl"></i>
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 -ml-8 -mb-8 h-32 w-32 rounded-full bg-indigo-400/20 blur-2xl"></div>
+        
+        <div class="absolute right-12 top-1/2 -translate-y-1/2 hidden lg:block">
+            <div class="flex gap-4">
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                    <div class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Total Revenue</div>
+                    <div class="text-2xl font-bold">${{ number_format($total_revenue, 2) }}</div>
                 </div>
-                <span class="flex items-center text-xs font-semibold text-indigo-500 bg-indigo-50 px-2.5 py-0.5 rounded-full">
-                    {{ $active_courses }} Active
-                </span>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Total Courses</h3>
-                <div class="flex items-baseline gap-2">
-                    <h4 class="text-3xl font-bold text-gray-900">{{ number_format($total_courses) }}</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Enrollments -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 transition-all hover:shadow-md">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-                    <i class="bi bi-mortarboard-fill text-2xl"></i>
-                </div>
-                <span class="flex items-center text-xs font-semibold text-emerald-500 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                    Lifetime
-                </span>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Enrollments</h3>
-                <div class="flex items-baseline gap-2">
-                    <h4 class="text-3xl font-bold text-gray-900">{{ number_format($total_enrollments) }}</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Revenue -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 transition-all hover:shadow-md">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-amber-50 rounded-xl text-amber-600">
-                    <i class="bi bi-currency-dollar text-2xl"></i>
-                </div>
-                <span class="flex items-center text-xs font-semibold text-amber-500 bg-amber-50 px-2.5 py-0.5 rounded-full">
-                    Total
-                </span>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-500 mb-1">Total Revenue</h3>
-                <div class="flex items-baseline gap-2">
-                    <h4 class="text-3xl font-bold text-gray-900">${{ number_format($total_revenue, 2) }}</h4>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                    <div class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Global Reach</div>
+                    <div class="text-2xl font-bold">12+ Countries</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Recent Activity -->
-        <div class="lg:col-span-2 space-y-6">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Students -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                    <i class="bi bi-people-fill text-2xl"></i>
+                </div>
+                <div class="flex items-center text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">
+                    <i class="bi bi-graph-up-arrow mr-1"></i> Active
+                </div>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Students</h3>
+            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_students) }}</div>
+        </div>
+
+        <!-- Courses -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+                    <i class="bi bi-journals text-2xl"></i>
+                </div>
+                <div class="flex items-center text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-lg">
+                    {{ $active_courses }} Active
+                </div>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Courses</h3>
+            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_courses) }}</div>
+        </div>
+
+        <!-- Enrollments -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                    <i class="bi bi-patch-check-fill text-2xl"></i>
+                </div>
+                <div class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
+                    Real-time
+                </div>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Enrollments</h3>
+            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_enrollments) }}</div>
+        </div>
+
+        <!-- Revenue -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                    <i class="bi bi-wallet2 text-2xl"></i>
+                </div>
+                <div class="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg">
+                    Withdrawal
+                </div>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Earnings</h3>
+            <div class="text-3xl font-bold text-gray-900 mt-1">${{ number_format($total_revenue, 2) }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Activity -->
+        <div class="lg:col-span-2 space-y-8">
             <!-- Recent Enrollments -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900">Recent Enrollments</h3>
-                    <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">View All</a>
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Recent Enrollments</h3>
+                        <p class="text-sm text-gray-500">Overview of the latest student signups</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors">View All</a>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full">
                         <thead>
                             <tr class="bg-gray-50/50">
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Course</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Action</th>
+                                <th class="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Student</th>
+                                <th class="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Course</th>
+                                <th class="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Date</th>
+                                <th class="px-8 py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-50">
                             @forelse($recent_enrollments as $enrollment)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
-                                <td class="px-6 py-4">
+                            <tr class="hover:bg-gray-50/50 transition-colors group">
+                                <td class="px-8 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold mr-3">
+                                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-sm group-hover:scale-110 transition-transform">
                                             {{ substr($enrollment->student_name, 0, 1) }}
                                         </div>
-                                        <span class="text-sm font-medium text-gray-900">{{ $enrollment->student_name }}</span>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-gray-900">{{ $enrollment->student_name }}</div>
+                                            <div class="text-xs text-gray-400">Student ID #{{ rand(1000, 9999) }}</div>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $enrollment->course_title }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ \Carbon\Carbon::parse($enrollment->created_at)->diffForHumans() }}</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewStudentDetail('{{ $enrollment->student_name }}', '{{ $enrollment->student_name }}@gmail.com')" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
-                                        Detail
-                                    </button>
+                                <td class="px-8 py-4 text-sm text-gray-600 font-medium">{{ \Illuminate\Support\Str::limit($enrollment->course_title, 30) }}</td>
+                                <td class="px-8 py-4 text-sm text-gray-500">{{ \Carbon\Carbon::parse($enrollment->created_at)->diffForHumans() }}</td>
+                                <td class="px-8 py-4 text-right">
+                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-600">Enrolled</span>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-8 text-center text-sm text-gray-500 italic">No recent enrollments found.</td>
+                                <td colspan="4" class="px-8 py-12 text-center text-gray-400 italic">No recent enrollments found.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -129,96 +139,100 @@
                 </div>
             </div>
 
-            <!-- Recent Courses -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900">New Courses</h3>
-                    <a href="{{ route('admin.courses.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Manage Courses</a>
+            <!-- New Courses -->
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-50">
+                    <h3 class="text-lg font-bold text-gray-900">Latest Course Releases</h3>
+                    <p class="text-sm text-gray-500">Manage and track your newest educational content</p>
                 </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @forelse($recent_courses as $course)
-                        <div class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-all">
-                            <div class="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
-                                @if($course->image)
-                                    <img src="{{ asset('storage/' . $course->image) }}" alt="Course" class="h-full w-full object-cover">
-                                @else
-                                    <div class="h-full w-full flex items-center justify-center bg-indigo-100 text-indigo-600">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="ml-4 flex-grow min-w-0">
-                                <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $course->title }}</h4>
-                                <div class="flex items-center text-xs text-gray-500 mt-0.5">
-                                    <span class="font-medium text-indigo-600">${{ number_format($course->price, 2) }}</span>
-                                    <span class="mx-2">•</span>
-                                    <span>{{ $course->created_at->format('M d, Y') }}</span>
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @forelse($recent_courses as $course)
+                    <div class="group flex items-center p-4 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 transition-all duration-300">
+                        <div class="h-16 w-16 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 shadow-sm">
+                            @if($course->image)
+                                <img src="{{ asset('storage/courses/' . $course->image) }}" alt="Course" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-600">
+                                    <i class="bi bi-journal-code text-xl"></i>
                                 </div>
-                            </div>
-                            <button onclick="viewStudentDetail('Top Student', 'top@student.com')" class="p-2 text-gray-400 hover:text-indigo-600 transition-colors">
-                                <i class="bi bi-person-lines-fill"></i>
-                            </button>
+                            @endif
                         </div>
-                        
-                        @empty
-                        <div class="col-span-2 text-center py-4 text-sm text-gray-500 italic">No courses created yet.</div>
-                        @endforelse
+                        <div class="ml-5 flex-grow min-w-0">
+                            <h4 class="text-sm font-bold text-gray-900 truncate mb-1">{{ $course->title }}</h4>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-extrabold text-indigo-600">${{ number_format($course->price, 2) }}</span>
+                                <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+                                <span class="text-xs text-gray-400 font-medium">{{ $course->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.courses.edit', $course->id) }}" class="p-2 text-gray-300 hover:text-indigo-600 transition-colors">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
                     </div>
+                    @empty
+                    <div class="col-span-2 text-center py-8 text-gray-400 italic">No courses created yet.</div>
+                    @endforelse
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar Activity/Quick Links -->
-        <div class="space-y-6">
-            <!-- Recent Students -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-100">
-                    <h3 class="font-bold text-gray-900">New Students</h3>
+        <!-- Right Column: Quick Stats & New Users -->
+        <div class="space-y-8">
+            <!-- New Students Sidebar -->
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-50 bg-gray-50/50">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest">New Students</h3>
                 </div>
-                <div class="p-4 space-y-4">
+                <div class="divide-y divide-gray-50">
                     @forelse($recent_students as $student)
-                    <div class="flex items-center group">
-                        <div class="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold mr-3 group-hover:bg-emerald-200 transition-colors">
+                    <div class="px-6 py-4 flex items-center hover:bg-gray-50/50 transition-colors group">
+                        <div class="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold ring-4 ring-emerald-50 group-hover:scale-110 transition-transform">
                             {{ substr($student->name, 0, 1) }}
                         </div>
-                        <div class="flex-grow min-w-0">
-                            <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $student->name }}</h4>
-                            <p class="text-xs text-gray-500 truncate">{{ $student->email }}</p>
+                        <div class="ml-3 flex-grow min-w-0">
+                            <h4 class="text-sm font-bold text-gray-900 truncate">{{ $student->name }}</h4>
+                            <p class="text-[10px] text-gray-400 uppercase font-medium tracking-wider">{{ $student->created_at->diffForHumans() }}</p>
                         </div>
-                        <div class="text-[10px] text-gray-400 font-medium whitespace-nowrap ml-2">
-                            {{ $student->created_at->diffForHumans(null, true) }}
-                        </div>
-                        <button onclick="viewStudentDetail('{{ $student->name }}', '{{ $student->email }}')" class="ml-3 p-1 text-gray-400 hover:text-indigo-600 transition-colors">
-                            <i class="bi bi-eye"></i>
-                        </button>
+                        <a href="{{ route('admin.users.edit', $student->id) }}" class="p-2 text-gray-300 hover:text-indigo-600">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
                     </div>
                     @empty
-                    <p class="text-sm text-gray-500 text-center py-2 italic">No new students.</p>
+                    <div class="px-6 py-8 text-center text-sm text-gray-400 italic">No new students today.</div>
                     @endforelse
                 </div>
-                <div class="p-4 bg-gray-50 border-t border-gray-100">
-                    <a href="{{ route('admin.users.index') }}" class="block text-center text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
-                        View All Users
-                    </a>
+                <div class="p-4 bg-gray-50/50 text-center">
+                    <a href="{{ route('admin.users.index') }}" class="text-xs font-bold text-gray-500 hover:text-indigo-600 transition-colors uppercase tracking-widest">Explore Directory</a>
                 </div>
-                
             </div>
 
-            <!-- Quick Stats/Info -->
-            <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
-                <div class="relative z-10">
-                    <h3 class="text-lg font-bold mb-2">LMS System Status</h3>
-                    <p class="text-indigo-100 text-sm mb-4">You have {{$total_courses}} total courses and {{$total_students}} enrolled students. Keep up the good work!</p>
-                    <div class="space-y-3">
-                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                            <div class="text-[10px] uppercase tracking-wider font-bold text-indigo-200 mb-1">Server Time</div>
-                            <div class="text-sm font-mono">{{ now()->format('Y-m-d H:i:s') }}</div>
+            <!-- Platform Pulse -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">Platform Pulse</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-indigo-50/50">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+                                <i class="bi bi-cpu"></i>
+                            </div>
+                            <span class="ml-3 text-xs font-bold text-gray-600">Server Health</span>
                         </div>
+                        <span class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-violet-50/50 text-xs font-bold text-gray-600">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <span class="ml-3">Last Backup</span>
+                        </div>
+                        <span>2h ago</span>
+                    </div>
+                    <div class="p-4 rounded-3xl bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100/50">
+                        <div class="text-[10px] text-indigo-400 uppercase font-extrabold mb-1 tracking-widest">Current Session</div>
+                        <div class="text-sm font-mono text-indigo-900">{{ now()->format('H:i') }} <span class="text-[10px] text-indigo-400 font-sans tracking-normal">GTM+5:30</span></div>
                     </div>
                 </div>
-                <!-- Decorative Circle -->
-                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
             </div>
         </div>
     </div>
@@ -226,99 +240,5 @@
 @endsection
 
 @push('scripts')
-
-<!-- Student Detail Modal -->
-<div id="studentDetailModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-black/50" onclick="closeStudentModal()"></div>
-
-        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 z-10">
-            
-            <h3 class="text-xl font-bold mb-4">Student Details</h3>
-
-            <!-- BASIC INFO -->
-            <div class="space-y-3 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-gray-500">Name</span>
-                    <span class="font-semibold" id="studentName">Arman Khan</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-500">Email</span>
-                    <span class="font-semibold" id="studentEmail">arman@example.com</span>
-                </div>
-            </div>
-
-            <!-- FEATURE ACCESS -->
-            <div class="mt-6">
-                <h4 class="text-md font-semibold mb-3 text-gray-800">
-                    Feature Access
-                </h4>
-
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span>Live Lecture</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">
-                            Allowed
-                        </span>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <span>Recorded Videos</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">
-                            Allowed
-                        </span>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <span>Chat with Teacher</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700">
-                            Not Allowed
-                        </span>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <span>Download Notes</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">
-                            Allowed
-                        </span>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <span>Certificate</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-700">
-                            After Completion
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ACTION BUTTONS -->
-            <div class="mt-6 flex gap-2">
-                <button class="flex-1 bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700">
-                    Start Live Lecture
-                </button>
-                <button onclick="closeStudentModal()" class="flex-1 bg-gray-200 py-2 rounded-xl">
-                    Close
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<script>
-    function viewStudentDetail(name, email) {
-        document.getElementById('studentName').innerText = name;
-        document.getElementById('studentEmail').innerText = email;
-        document.getElementById('studentDetailModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeStudentModal() {
-        document.getElementById('studentDetailModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-</script>
-
+{{-- Unnecessary JS removed as per request --}}
 @endpush
-
