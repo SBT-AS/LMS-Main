@@ -104,4 +104,53 @@ class RazorpayController extends Controller
             return redirect()->route('cart.index')->with('error', 'Payment verification failed: ' . $e->getMessage());
         }
     }
+    public function storeDummy(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Generate Dummy IDs
+        // Use user provided UPI ID if available to simulate a real transaction ID involving their VPA
+        $upiId = $request->input('upi_id', 'unknown_upi');
+        // Sanitize UPI ID for ID generation (remove special chars)
+        $sanitizedUpi = preg_replace('/[^a-zA-Z0-9]/', '', $upiId);
+        
+        $paymentId = 'pay_upi_' . substr($sanitizedUpi, 0, 10) . '_' . time();
+        $orderId = 'order_upi_' . time();
+
+        $cartItems = Cart::with('course')->where('user_id', $user->id)->get();
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
+
+        $total = $cartItems->sum(function ($item) {
+            return $item->course->price;
+        });
+
+        // Save Payment History
+        \App\Models\Payment::create([
+            'user_id' => $user->id,
+            'rwp_payment_id' => $paymentId,
+            'rwp_order_id' => $orderId,
+            'amount' => $total, 
+            'status' => 'success',
+        ]);
+
+        foreach ($cartItems as $item) {
+            // Enroll user in course if not already enrolled
+            if (!$user->courses->contains($item->course_id)) {
+                $user->courses()->attach($item->course_id, [
+                    'enrolled_at' => now(),
+                    'status' => 'active'
+                ]);
+            }
+        }
+        
+        // Clear Cart
+        Cart::where('user_id', $user->id)->delete();
+        
+        return redirect()->route('student.dashboard')->with('success', 'UPI Payment successful! You have been enrolled in the courses.');
+    }
 }

@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     // Razorpay Checkout Routes
     Route::get('/razorpay/checkout', [App\Http\Controllers\RazorpayController::class, 'index'])->name('razorpay.index');
     Route::post('/razorpay/payment/store', [App\Http\Controllers\RazorpayController::class, 'store'])->name('razorpay.payment.store');
+    Route::post('/razorpay/payment/dummy', [App\Http\Controllers\RazorpayController::class, 'storeDummy'])->name('razorpay.payment.dummy');
 });
 
 /*

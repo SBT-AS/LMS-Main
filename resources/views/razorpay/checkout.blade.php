@@ -84,6 +84,25 @@
         color: #48bb78;
         margin-right: 5px;
     }
+    
+    /* Modal Styles */
+    .payment-option-card {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .payment-option-card:hover {
+        border-color: #667eea;
+        background-color: #f7fafc;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .payment-option-card.active {
+        border-color: #667eea;
+        background-color: #ebf4ff;
+    }
 </style>
 
 <section class="checkout-section py-5">
@@ -123,7 +142,8 @@
                         </div>
 
                         <!-- Pay Button -->
-                        <button id="rzp-button1" class="btn btn-primary btn-lg w-100 rounded-pill pay-btn text-white">
+
+                        <button type="button" class="btn btn-primary btn-lg w-100 rounded-pill pay-btn text-white" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">
                             Pay Now <i class="fas fa-arrow-right ms-2"></i>
                         </button>
                         
@@ -145,7 +165,80 @@
             </div>
         </div>
     </div>
+
 </section>
+
+<!-- Payment selection Modal -->
+<div class="modal fade" id="paymentMethodModal" tabindex="-1" aria-labelledby="paymentMethodModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0 bg-light">
+        <h5 class="modal-title fw-bold text-dark" id="paymentMethodModalLabel">Select Payment Method</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+          <p class="text-muted mb-4 small">Choose how you would like to complete your purchase of <strong>₹{{ number_format($total, 2) }}</strong>.</p>
+          
+          <div class="d-grid gap-3">
+              <!-- Card / Razorpay Option -->
+              <div class="payment-option-card d-flex align-items-center" onclick="proceedWithCard()">
+                  <div class="bg-blue-100 rounded-circle p-3 me-3 text-primary bg-light">
+                      <i class="fas fa-credit-card fa-lg"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                      <h6 class="fw-bold mb-0 text-dark">Credit / Debit Card</h6>
+                      <small class="text-muted">Secure payment via Razorpay</small>
+                  </div>
+                  <i class="fas fa-chevron-right text-muted"></i>
+              </div>
+
+              <!-- UPI Option -->
+              <div class="payment-option-card d-flex align-items-center" onclick="proceedWithUPI()">
+                   <div class="bg-green-100 rounded-circle p-3 me-3 text-success bg-light">
+                      <i class="fas fa-mobile-alt fa-lg"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                      <h6 class="fw-bold mb-0 text-dark">UPI Payment</h6>
+                      <small class="text-muted">GPay, PhonePe, Paytm</small>
+                  </div>
+                  <i class="fas fa-chevron-right text-muted"></i>
+              </div>
+          </div>
+
+          <!-- UPI Input Form (Hidden initially) -->
+          <div id="upi-input-form" style="display: none;">
+              <h5 class="fw-bold text-dark mb-3">Enter UPI ID</h5>
+              <div class="mb-3">
+                  <label for="upi_id" class="form-label text-muted small">UPI ID / VPA</label>
+                  <input type="text" class="form-control form-control-lg" id="user_upi_id" name="upi_id" form="dummy-upi-form" placeholder="e.g. user@upi" required>
+                  <div class="invalid-feedback">Please enter a valid UPI ID.</div>
+              </div>
+              <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-success btn-lg" onclick="confirmUPIPayment()">
+                      Pay ₹{{ number_format($total, 2) }}
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" onclick="backToOptions()">Back</button>
+              </div>
+          </div>
+
+           <!-- UPI Processing Animation (Hidden initially) -->
+            <div id="upi-processing-view" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Processing UPI Payment...</h5>
+                <p class="text-muted small">Please do not close this window.</p>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dummy UPI Form -->
+<form action="{{ route('razorpay.payment.dummy') }}" method="POST" id="dummy-upi-form" style="display: none;">
+    @csrf
+    <!-- Input is linked via 'form' attribute in the modal -->
+</form>
 
 <!-- Razorpay Script -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -175,6 +268,24 @@
         "theme": {
             "color": "#667eea" 
         },
+        "config": {
+            "display": {
+                "blocks": {
+                    "banks": {
+                        "name": "Pay via Card",
+                        "instruments": [
+                            {
+                                "method": "card"
+                            }
+                        ],
+                    },
+                },
+                "sequence": ["block.banks"],
+                "preferences": {
+                    "show_default_blocks": false,
+                },
+            },
+        },
         "modal": {
             "ondismiss": function(){
                 console.log('Checkout form closed');
@@ -182,11 +293,59 @@
         }
     };
     
+    
     var rzp1 = new Razorpay(options);
     
-    document.getElementById('rzp-button1').onclick = function(e){
+    // Function to handle Card payment (Real Razorpay)
+    function proceedWithCard() {
+        // Close modal first
+        var myModalEl = document.getElementById('paymentMethodModal');
+        var modal = bootstrap.Modal.getInstance(myModalEl);
+        modal.hide();
+
+        // Open Razorpay
         rzp1.open();
-        e.preventDefault();
     }
+
+    // Function to handle UPI payment (Show Input)
+    function proceedWithUPI() {
+        var optionsDiv = document.querySelector('.modal-body .d-grid');
+        var inputForm = document.getElementById('upi-input-form');
+        
+        // Hide options, show input form
+        optionsDiv.style.display = 'none';
+        inputForm.style.display = 'block';
+    }
+
+    // Back to options
+    function backToOptions() {
+        var optionsDiv = document.querySelector('.modal-body .d-grid');
+        var inputForm = document.getElementById('upi-input-form');
+        
+        inputForm.style.display = 'none';
+        optionsDiv.style.display = 'grid'; // Restore grid layout
+    }
+
+    // Confirm and Pay
+    function confirmUPIPayment() {
+        var upiInput = document.getElementById('user_upi_id');
+        if(!upiInput.value.trim()) {
+            alert("Please enter a UPI ID");
+            return;
+        }
+
+        // Show processing
+        var inputForm = document.getElementById('upi-input-form');
+        var spinner = document.getElementById('upi-processing-view');
+        
+        inputForm.style.display = 'none';
+        spinner.style.display = 'block';
+
+        // Wait 2 seconds then submit dummy form
+        setTimeout(function() {
+            document.getElementById('dummy-upi-form').submit();
+        }, 2000);
+    }
+
 </script>
 @endsection
