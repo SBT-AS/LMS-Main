@@ -326,8 +326,11 @@
         <a href="{{ route('student.certificates.index') }}" class="btn-premium">
             <i class="bi bi-grid"></i> All Certificates
         </a>
-        <button onclick="window.print()" class="btn-premium btn-success-premium">
-            <i class="bi bi-printer-fill"></i> Download / Print
+        <a href="{{ route('student.certificates.download', $certificate->id) }}" class="btn-premium btn-success-premium">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF
+        </a>
+        <button onclick="window.print()" class="btn-premium">
+            <i class="bi bi-printer-fill"></i> Print
         </button>
     </div>
 

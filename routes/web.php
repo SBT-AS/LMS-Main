@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     // Certificate Routes
     Route::get('/my-certificates', [App\Http\Controllers\Frontend\CertificateController::class, 'index'])->name('student.certificates.index');
     Route::get('/my-certificates/{id}', [App\Http\Controllers\Frontend\CertificateController::class, 'show'])->name('student.certificates.show');
+    Route::get('/my-certificates/{id}/download', [App\Http\Controllers\Frontend\CertificateController::class, 'download'])->name('student.certificates.download');
 
     // Razorpay Checkout Routes
     Route::get('/razorpay/checkout', [App\Http\Controllers\RazorpayController::class, 'index'])->name('razorpay.index');
