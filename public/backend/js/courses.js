@@ -366,36 +366,31 @@ const CourseEditor = {
         });
     },
 
-    // Image Preview Helper (Optional)
+
+
     initImageUpload: function () {
         const input = document.getElementById('imageInput');
         const uploadZone = document.getElementById('uploadZone');
 
-        if (!input) return;
+        if (input && uploadZone) {
+            uploadZone.addEventListener('click', () => input.click());
 
-        // Add click listener to the zone to trigger input
-        if (uploadZone) {
-            uploadZone.addEventListener('click', function () {
-                input.click();
+            input.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('imagePreview');
+                        if (preview && uploadZone) {
+                            preview.querySelector('img').src = e.target.result;
+                            preview.classList.remove('hidden');
+                            uploadZone.classList.add('hidden');
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
             });
         }
-
-        input.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const preview = document.getElementById('imagePreview');
-                    const uploadZone = document.getElementById('uploadZone'); // re-select to be safe or use outer var
-                    if (preview && uploadZone) {
-                        preview.querySelector('img').src = e.target.result;
-                        preview.classList.remove('hidden');
-                        uploadZone.classList.add('hidden');
-                    }
-                }
-                reader.readAsDataURL(file);
-            }
-        });
     },
 
     removeImage: function () {
@@ -404,7 +399,10 @@ const CourseEditor = {
         const uploadZone = document.getElementById('uploadZone');
 
         if (input) input.value = '';
-        if (preview) preview.classList.add('hidden');
+        if (preview) {
+            preview.classList.add('hidden');
+            preview.querySelector('img').src = '';
+        }
         if (uploadZone) uploadZone.classList.remove('hidden');
     }
 };

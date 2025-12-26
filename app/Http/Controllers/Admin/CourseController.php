@@ -111,6 +111,10 @@ class CourseController extends Controller
             $rules['quizzes.*.questions.*.options'] = 'required|array|size:4';
             $rules['quizzes.*.questions.*.correct'] = 'required|in:1,2,3,4';
         }
+         // ✅ live class = YES
+         if ($request->live_class == 1) {
+            $rules['live_class_link'] =  'required_if:live_class,1|nullable|url';
+        }
     
         /* =======================
             CUSTOM ATTRIBUTE NAMES

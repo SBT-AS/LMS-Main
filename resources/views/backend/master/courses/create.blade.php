@@ -74,8 +74,8 @@
                             <i class="bi bi-cloud-arrow-up"></i>
                             <p class="font-medium">Click to upload image</p>
                             <span class="hint">PNG, JPG up to 2MB</span>
-                            <input type="file" name="image" accept="image/*" class="hidden" id="imageInput">
                         </div>
+                        <input type="file" name="image" accept="image/*" class="hidden" id="imageInput">
                         <div id="imagePreview" class="image-preview mt-4 hidden">
                             <img src="" alt="Preview">
                             <button type="button" class="remove-btn" onclick="removeImage()">
@@ -279,34 +279,9 @@
         document.querySelector('#videoPreview video').src = '';
     }
 
-    // Add Image preview logic if not already present
-    const imageInput = document.getElementById('imageInput');
-    const uploadZone = document.getElementById('uploadZone');
+    // Image preview logic is handled by backend/js/courses.js CourseEditor.initImageUpload()
 
-    if(uploadZone && imageInput) {
-        uploadZone.addEventListener('click', () => imageInput.click());
-        
-        imageInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.querySelector('#imagePreview img');
-                    preview.src = e.target.result;
-                    uploadZone.classList.add('hidden');
-                    document.getElementById('imagePreview').classList.remove('hidden');
-                }
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-    }
-
-    window.removeImage = function() {
-        const input = document.getElementById('imageInput');
-        input.value = '';
-        document.getElementById('uploadZone').classList.remove('hidden');
-        document.getElementById('imagePreview').classList.add('hidden');
-        document.querySelector('#imagePreview img').src = '';
-    }
+    // removeImage is handled by backend/js/courses.js global function
 
     function toggleLiveLink() {
         const select = document.getElementById('liveClassSelect');

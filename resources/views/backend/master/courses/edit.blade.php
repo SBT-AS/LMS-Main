@@ -440,35 +440,9 @@
         document.querySelector('#videoPreview video').src = '';
     }
 
-    // Add Image preview logic if not already present
-    const imageInput = document.getElementById('imageInput');
-    const uploadZone = document.getElementById('uploadZone');
+    // Image preview logic is handled by backend/js/courses.js CourseEditor.initImageUpload()
 
-    if(uploadZone && imageInput) {
-        uploadZone.addEventListener('click', () => imageInput.click());
-        
-        imageInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.querySelector('#imagePreview img');
-                    preview.src = e.target.result;
-                    uploadZone.classList.add('hidden');
-                    document.getElementById('imagePreview').classList.remove('hidden');
-                }
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-    }
-
-    window.removeImage = function() {
-        const input = document.getElementById('imageInput');
-        input.value = '';
-        document.getElementById('uploadZone').classList.remove('hidden');
-        document.getElementById('imagePreview').classList.add('hidden');
-        document.querySelector('#imagePreview img').src = '';
-        // If editing, you might want to show the current image again or just leave blank to not update
-    }
+    // removeImage is handled by backend/js/courses.js global function
 
     function toggleLiveLink() {
         const select = document.getElementById('liveClassSelect');
