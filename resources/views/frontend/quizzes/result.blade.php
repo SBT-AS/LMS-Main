@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="p-3 bg-light bg-opacity-5 rounded-4">
-                            <h3 class="fw-bold text-white mb-0">{{ $attempt->answers->where('is_correct', true)->count() }}</h3>
+                            <h3 class="fw-bold text-accent mb-0">{{ $attempt->answers->where('is_correct', true)->count() }}</h3>
                             <small class="text-muted">Correct</small>
                         </div>
                     </div>

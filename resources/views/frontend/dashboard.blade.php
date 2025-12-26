@@ -7,12 +7,11 @@
     .dashboard-container {
         min-height: 80vh;
     }
-    .sidebar-card {
-        border: none;
-        border-radius: 12px;
-        overflow: hidden;
+    .theme-card {
         background: var(--bg-surface);
         border: 1px solid var(--border-light);
+        border-radius: 12px;
+        overflow: hidden;
     }
     .user-profile-header {
         background: linear-gradient(135deg, var(--accent-color) 0%, #0a58ca 100%);
@@ -118,13 +117,21 @@
         <div class="row g-4">
             <!-- Left Sidebar -->
             <div class="col-lg-3">
-                <div class="card sidebar-card shadow-sm position-sticky" style="top: 100px; z-index: 10;">
+                <div class="theme-card shadow-sm position-sticky" style="top: 100px; z-index: 10;">
                     <div class="user-profile-header">
                         <div class="position-relative d-inline-block">
-                            <div class="avatar-circle mx-auto mb-3 bg-white text-dark fw-bold d-flex align-items-center justify-content-center shadow" 
-                                 style="width: 80px; height: 80px; font-size: 2.5rem; border-radius: 50%;">
-                                 {{ substr(Auth::user()->name, 0, 1) }}
-                            </div>
+                            @if(Auth::user()->profile_photo_path)
+                                <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" 
+                                     alt="{{ Auth::user()->name }}" 
+                                     class="avatar-circle mx-auto mb-3 shadow rounded-circle object-fit-cover" 
+                                     style="width: 80px; height: 80px; border: 3px solid rgba(255,255,255,0.2);">
+                            @else
+                                <div class="avatar-circle mx-auto mb-3 bg-white text-dark fw-bold d-flex align-items-center justify-content-center shadow" 
+                                     style="width: 80px; height: 80px; font-size: 2.5rem; border-radius: 50%;">
+                                     {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                            @endif
+                            
                             <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-white rounded-circle">
                                 <span class="visually-hidden">Online</span>
                             </span>
@@ -132,7 +139,7 @@
                         <h5 class="fw-bold mb-1 text-white">{{ Auth::user()->name }}</h5>
                         <p class="mb-0 text-white-50 small">{{ Auth::user()->email }}</p>
                     </div>
-                    <div class="card-body p-0 py-2">
+                    <div class="p-0 py-2">
                         <div class="d-flex flex-column">
                             <a href="{{ route('student.dashboard') }}" class="nav-link-dashboard active">
                                 <i class="bi bi-speedometer2"></i> Dashboard

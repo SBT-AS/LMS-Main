@@ -25,6 +25,7 @@
                         <th scope="col" class="px-6 py-3">Name</th>
                         <th scope="col" class="px-6 py-3">Email</th>
                         <th scope="col" class="px-6 py-3">Roles</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3 text-center" width="20%">Action</th>
                     </tr>
                 </thead>
@@ -48,9 +49,40 @@ $(document).ready(function () {
             {data: 'name'},
             {data: 'email'},
             {data: 'roles'},
+            {data: 'status', orderable: false, searchable: false},
             {data: 'action', orderable: false, searchable: false, className: 'text-center'}
         ]
     );
+
+    $(document).on('change', '.toggle-class', function() {
+        var status = $(this).prop('checked') ? 'active' : 'inactive';
+        var user_id = $(this).data('id'); 
+        
+        $.ajax({
+            type: "PUT",
+            dataType: "json",
+            url: '/admin/users/'+user_id+'/status',
+            data: {'status': status, '_token': '{{ csrf_token() }}'},
+            success: function(data){
+              Swal.fire({
+                  toast: true,
+                  position: 'top-end',
+                  icon: 'success',
+                  title: data.success,
+                  showConfirmButton: false,
+                  timer: 3000
+              });
+            },
+            error: function(data) {
+                console.log('Error:', data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                });
+            }
+        });
+    });
 });
 </script>
 @endpush

@@ -290,7 +290,9 @@
                 <div class="content-card-premium">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="fw-bold mb-0">Course Curriculum</h3>
-                        <span class="badge bg-white bg-opacity-10 rounded-pill px-3">{{ $course->materials->count() }} Items</span>
+                        <span class="badge bg-white bg-opacity-10 square-pill px-4" style="color: #fff;">
+                            {{ $course->materials->count() }} Items
+                        </span>
                     </div>
 
                     <!-- Video Group -->

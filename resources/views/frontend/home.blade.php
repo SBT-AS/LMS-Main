@@ -135,27 +135,48 @@
                     Hand-picked selections to get you hired.
                 </p>
             </div>
+            
+            <div class="dropdown">
+                @php
+                    $selectedCategoryId = request('category_id');
+                    $selectedCategoryName = 'All Categories';
+                    if($selectedCategoryId) {
+                        $found = $categories->firstWhere('id', $selectedCategoryId);
+                        if($found) $selectedCategoryName = $found->name;
+                    }
+                @endphp
+                
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="categoryDropdownBtn">
+                    <i class="bi bi-funnel me-1"></i> <span id="selectedCategoryText">{{ $selectedCategoryName }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <li>
+                        <a class="dropdown-item text-white category-filter" href="#" data-id="">
+                            All Categories
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider" style="border-color: var(--border-light);"></li>
+                    @foreach($categories as $cat)
+                        <li>
+                            <a class="dropdown-item text-white category-filter" href="#" data-id="{{ $cat->id }}" data-name="{{ $cat->name }}">
+                                {{ $cat->name }}
+                                <span class="badge bg-secondary ms-2" style="font-size: 0.7em;">{{ $cat->courses_count }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
 
-        <div class="row g-4">
-            @forelse($featuredCourses as $course)
-                <div class="col-md-6 col-lg-4">
-                    @include('frontend.components.course-card', ['course' => $course])
-                </div>
-            @empty
-                <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="bi bi-inbox fs-1 text-muted"></i>
-                        <p class="text-muted mt-3">No courses available yet. Check back soon!</p>
-                    </div>
-                </div>
-            @endforelse
+        <div class="row g-4" id="courses-container">
+            @include('frontend.partials.course-list')
         </div>
     </div>
 </section>
 
 <!-- Meet Our Mentors Section -->
 <section class="mentors-pro-section py-5">
+    <!-- ... (rest of the file content remains same until script) ... -->
     <div class="container">
 
         <div class="text-center mb-5">
@@ -343,4 +364,56 @@
 
     </style>
 </section>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryLinks = document.querySelectorAll('.category-filter');
+    const coursesContainer = document.getElementById('courses-container');
+    const dropdownBtnText = document.getElementById('selectedCategoryText');
+
+    categoryLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const categoryId = this.dataset.id;
+            const categoryName = this.dataset.name || 'All Categories';
+            
+            // Update UI immediately (Optimistic UI)
+            dropdownBtnText.textContent = categoryName;
+            
+            // Add loading state
+            coursesContainer.style.opacity = '0.5';
+            
+            // Fetch courses
+            fetch(`{{ route('frontend.home') }}?category_id=${categoryId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                coursesContainer.innerHTML = html;
+                coursesContainer.style.opacity = '1';
+                
+                // Re-initialize any javascript components if needed for new elements
+                // e.g. tooltips, animations
+                
+                // Scroll to courses section smoothly if needed, but since it matches "without refresh" user might prefer staying put.
+                // Optionally: document.getElementById('courses').scrollIntoView({behavior: 'smooth'});
+            })
+            .catch(error => {
+                console.error('Error fetching courses:', error);
+                coursesContainer.style.opacity = '1';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong while loading courses!'
+                });
+            });
+        });
+    });
+});
+</script>
+@endpush
 @endsection

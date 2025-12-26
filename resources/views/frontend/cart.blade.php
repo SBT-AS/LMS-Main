@@ -15,14 +15,19 @@
                         <div class="cart-item mb-3 p-3">
                             <div class="row align-items-center">
                                 <div class="col-md-3">
-                                    @if($course->image)
-                                        <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}" class="img-fluid rounded">
-                                    @else
-                                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" alt="{{ $course->title }}" class="img-fluid rounded">
-                                    @endif
+                                    
+                                    <a href="{{ route('student.courses.show', $course->slug) }}">
+                                        @if($course->image)
+                                            <img src="{{ asset('storage/courses/' . $course->image) }}" alt="{{ $course->title }}" class="img-fluid rounded">
+                                        @else
+                                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" alt="{{ $course->title }}" class="img-fluid rounded">
+                                        @endif
+                                    </a>
                                 </div>
                                 <div class="col-md-6">
-                                    <h5 class="fw-bold mb-2">{{ $course->title }}</h5>
+                                    <a href="{{ route('student.courses.show', $course->slug) }}" class="text-decoration-none text-dark">
+                                        <h5 class="fw-bold mb-2">{{ $course->title }}</h5>
+                                    </a>
                                     <p class="text-muted small mb-0">{{ $course->category->name ?? 'General' }}</p>
                                 </div>
                                 <div class="col-md-3 text-end">
@@ -32,7 +37,7 @@
                                         @method('DELETE')
                                        <button type="submit"
     class="btn btn-sm d-flex align-items-center gap-1 text-danger border border-danger rounded-pill px-3 py-1 cart-remove-btn">
-    <i class="bi bi-trash"></i>
+    <i class="bi bi-trash"></i> 
     <span>Remove</span>
 </button>
 
@@ -72,6 +77,7 @@
                         <p class="text-muted small text-center mt-3 mb-0">
                             <i class="bi bi-shield-check me-1"></i> Secure checkout powered by Razorpay
                         </p>
+                     
                     </div>
                 </div>
             </div>

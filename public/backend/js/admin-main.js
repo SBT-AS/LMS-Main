@@ -11,6 +11,17 @@ $(document).ready(function () {
         }
     });
 
+    // Explicitly Initialize Select2 for .init_select2 class
+    if ($.fn.select2) {
+        $('.init_select2').select2({
+            width: '100%',
+            allowClear: true,
+            placeholder: function () {
+                return $(this).data('placeholder');
+            }
+        });
+    }
+
     // Initialize AjaxCrud for global components if available
     if (typeof AjaxCrud !== 'undefined') {
         AjaxCrud.init();

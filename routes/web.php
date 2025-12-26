@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\Frontend\StudentQuizController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\CategoryController;    
-use App\Http\Controllers\RazorpayController;
+
 use App\Http\Controllers\Admin\AdminDashBoardController;
 
 /*
@@ -72,8 +72,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-certificates/{id}', [App\Http\Controllers\Frontend\CertificateController::class, 'show'])->name('student.certificates.show');
 
     // Razorpay Checkout Routes
-    Route::get('/razorpay', [RazorpayController::class, 'index'])->name('razorpay.index');
-    Route::post('/razorpay/callback', [RazorpayController::class, 'paymentCallback'])->name('razorpay.callback');
+    Route::get('/razorpay/checkout', [App\Http\Controllers\RazorpayController::class, 'index'])->name('razorpay.index');
+    Route::post('/razorpay/payment/store', [App\Http\Controllers\RazorpayController::class, 'store'])->name('razorpay.payment.store');
 });
 
 /*
@@ -121,6 +121,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('roles', RoleController::class);
 
         // User Management
+        Route::put('users/{id}/status', [UserController::class, 'updateStatus'])->name('users.updateStatus');
         Route::resource('users', UserController::class);
         // Category Management
         Route::resource('categories', CategoryController::class);
@@ -139,6 +140,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/{quiz}', [QuizController::class, 'destroy'])->name('destroy');
             Route::get('/{quiz}/results', [QuizController::class, 'showResults'])->name('results');
         });
+
+        // Payment History
+        Route::get('payments', [App\Http\Controllers\Admin\AdminPaymentController::class, 'index'])->name('payments.index');
     });
 });
 

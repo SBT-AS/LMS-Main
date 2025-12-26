@@ -6,7 +6,7 @@
  * - Laravel Validation Errors
  */
 
-const AjaxCrud = {
+window.AjaxCrud = {
     config: {
         tableId: '#dataTable',
         createModalId: '#createModal',

@@ -9,14 +9,23 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get featured courses (you can modify the logic as needed)
-        $featuredCourses = Course::with('category')
-            ->where('status', true)
-            ->latest()
+        $query = Course::with('category')
+            ->where('status', true);
+
+        if ($request->has('category_id') && $request->category_id != '') {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $featuredCourses = $query->latest()
             ->limit(6)
             ->get();
+
+        if ($request->ajax()) {
+            return view('frontend.partials.course-list', compact('featuredCourses'))->render();
+        }
 
         $categories = Category::withCount('courses')->get();
 

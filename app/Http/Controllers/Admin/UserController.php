@@ -24,9 +24,13 @@ class UserController extends Controller
                     return $user->getRoleNames()->implode(', ');
                 })
                 ->addColumn('status', function ($user) {
-                    $statusClass = $user->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-                    $statusText = ucfirst($user->status);
-                    return '<span class="px-2.5 py-1 rounded-full text-xs font-medium ' . $statusClass . '">' . $statusText . '</span>';
+                    $checked = $user->status == 'active' ? 'checked' : '';
+                    return '
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" data-id="' . $user->id . '" class="sr-only peer toggle-class" ' . $checked . '>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label>
+                    ';
                 })
                 ->addColumn('action', function ($data) {
                     return view('backend.layouts.action', compact('data'))
@@ -134,4 +138,12 @@ class UserController extends Controller
         ]);
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = $request->status;
+        $user->save();
+
+        return response()->json(['success' => 'Status changed successfully.']);
+    }
 }

@@ -58,7 +58,15 @@
                 </a>
             </li>
             
-        </ul>
+            <li class="px-6 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Finance
+            </li>
+            <li>
+                <a href="{{ route('admin.payments.index') }}" class="flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors {{ request()->routeIs('admin.payments.*') ? 'bg-gray-800 text-white border-r-4 border-indigo-500' : '' }}">
+                    <i class="bi bi-wallet2 text-lg mr-3"></i>
+                    <span class="font-medium">Payment History</span>
+                </a>
+            </li>
     </nav>
     
     <!-- User Footer -->
