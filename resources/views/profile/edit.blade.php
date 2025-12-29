@@ -145,13 +145,41 @@
                             @csrf
                             @method('patch')
 
-                            <div class="mb-3">
-                                <label for="profile_image" class="form-label fw-semibold">Profile Photo</label>
-                                <input type="file" class="form-control @error('profile_image') is-invalid @enderror" id="profile_image" name="profile_image" accept="image/*">
+                            <div class="mb-4 text-center">
+                                <div class="position-relative d-inline-block group" style="cursor: pointer;" onclick="document.getElementById('profile_image').click()">
+                                    <div id="image-preview-container-frontend" class="rounded-circle overflow-hidden border border-primary border-3" style="width: 120px; height: 120px;">
+                                        @if(Auth::user()->profile_photo_path)
+                                            <img id="image-preview-frontend" src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-100 h-100 object-fit-cover">
+                                        @else
+                                            <div id="image-placeholder-frontend" class="w-100 h-100 bg-primary text-white d-flex align-items-center justify-content-center fs-1">
+                                                {{ substr(Auth::user()->name, 0, 1) }}
+                                            </div>
+                                            <img id="image-preview-frontend" src="" alt="Preview" class="w-100 h-100 object-fit-cover d-none">
+                                        @endif
+                                    </div>
+                                    <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 shadow">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </div>
+                                </div>
+                                <input type="file" class="d-none @error('profile_image') is-invalid @enderror" id="profile_image" name="profile_image" accept="image/*">
+                                <p class="text-muted small mt-2">Click to change profile photo</p>
                                 @error('profile_image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <script>
+                                document.getElementById('profile_image').onchange = function(evt) {
+                                    const [file] = this.files;
+                                    if (file) {
+                                        const preview = document.getElementById('image-preview-frontend');
+                                        const placeholder = document.getElementById('image-placeholder-frontend');
+                                        preview.src = URL.createObjectURL(file);
+                                        preview.classList.remove('d-none');
+                                        if (placeholder) placeholder.classList.add('d-none');
+                                    }
+                                }
+                            </script>
 
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-semibold">Name</label>

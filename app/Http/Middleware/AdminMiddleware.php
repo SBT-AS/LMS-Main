@@ -17,9 +17,8 @@ class AdminMiddleware
             return redirect()->route('admin.login');
         }
 
-        if (!auth()->user()->hasRole('admin')) {
-            // Breeze style error handling
-            return redirect('/')->with('error', 'Access denied. Admin only.');
+        if (auth()->user()->hasRole('student')) {
+            return redirect('/')->with('error', 'Access denied.');
         }
 
         return $next($request);

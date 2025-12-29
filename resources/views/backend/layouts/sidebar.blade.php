@@ -7,7 +7,7 @@
         </a>
      
         <h1 class="text-xl font-bold tracking-wider leading-none">
-            <span class="text-indigo-500">LMS</span> ADMIN
+            <span class="text-indigo-500">EDUCATER</span> ADMIN
         </h1>
     </div>
 
@@ -21,11 +21,10 @@
                 </a>
             </li>
 
-            <li class="px-6 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            @can('roles.view')
+              <li class="px-6 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 User Management
             </li>
-
-            @can('roles.view')
             <li>
                 <a href="{{ route('admin.roles.index') }}" class="flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors {{ request()->routeIs('admin.roles.*') ? 'bg-gray-800 text-white border-r-4 border-indigo-500' : '' }}">
                     <i class="bi bi-shield-lock text-lg mr-3"></i>
@@ -42,7 +41,7 @@
                 </a>
             </li>
             @endcan
-                <li class="px-6 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <li class="px-6 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Course Management
             </li>
             <li>
@@ -72,8 +71,15 @@
     <!-- User Footer -->
     <div class="p-4 border-t border-gray-800">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold">
-                {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+            <a href="{{ route('admin.profile.edit') }}" class="text-gray-400 hover:text-white transition-colors">
+                <i class="bi bi-gear"></i>
+            </a>
+            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold overflow-hidden">
+                @if(Auth::user()->profile_photo_path)
+                    <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                @else
+                    {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                @endif
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">

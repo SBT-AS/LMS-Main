@@ -18,7 +18,9 @@
         <!-- Profile Dropdown (Simplified for now) -->
         <div class="relative group">
             <button class="flex items-center space-x-2 focus:outline-none">
-                <img class="w-8 h-8 rounded-full border border-gray-200" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&background=random" alt="Admin">
+                <img class="w-8 h-8 rounded-full border border-gray-200" 
+                     src="{{ Auth::user()->profile_photo_path ? Storage::url(Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name ?? 'Admin').'&background=random' }}" 
+                     alt="{{ Auth::user()->name }}">
             </button>
         </div>
     </div>

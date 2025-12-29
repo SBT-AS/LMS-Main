@@ -46,16 +46,20 @@
                             {{ Auth::user()->name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-surface); border: 1px solid var(--border-light);">
-                            <li><a class="dropdown-item text-white" href="{{ Auth::user()->hasRole('admin') ? route('admin.dashboard') : route('student.dashboard') }}">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                            </a></li>
-                            <li><a class="dropdown-item text-white" href="{{ route('student.certificates.index') }}">
-                                <i class="bi bi-award me-2"></i>Certificates
-                            </a></li>
+                            @if(!Auth::user()->hasRole('student'))
+                                <li><a class="dropdown-item text-white" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-shield-lock me-2"></i>Admin Panel
+                                </a></li>
+                            @endif
                             <li><hr class="dropdown-divider" style="border-color: var(--border-light);"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
+                                    @if(Auth::user()->hasRole('student'))
+                                      <a href="{{ route('student.dashboard') }}" class="dropdown-item text-white">
+                                        <i class="bi bi-person me-2"></i>Dashboard
+                                    </a>
+                                    @endif
                                     <button type="submit" class="dropdown-item text-white">
                                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                                     </button>

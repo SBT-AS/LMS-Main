@@ -16,10 +16,17 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::with('roles')->select(['id', 'name', 'email', 'status']);
+            $data = User::with('roles')->select(['id', 'name', 'email', 'status', 'profile_photo_path']);
 
             return datatables()->of($data)
                 ->addIndexColumn()
+                ->editColumn('name', function ($user) {
+                    $avatar = $user->profile_photo_path 
+                        ? '<img src="' . \Storage::url($user->profile_photo_path) . '" alt="" class="h-8 w-8 rounded-full object-cover mr-2">'
+                        : '<div class="h-8 w-8 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold mr-2">' . substr($user->name, 0, 1) . '</div>';
+                    
+                    return '<div class="flex items-center">' . $avatar . '<span>' . $user->name . '</span></div>';
+                })
                 ->addColumn('roles', function ($user) {
                     return $user->getRoleNames()->implode(', ');
                 })
@@ -37,7 +44,7 @@ class UserController extends Controller
                         ->with('module', 'users')
                         ->with('module2', 'admin.users');
                 })
-                ->rawColumns(['action', 'status'])
+                ->rawColumns(['name', 'action', 'status'])
                 ->make(true);
         }
 

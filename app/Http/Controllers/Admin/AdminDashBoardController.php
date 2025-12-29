@@ -12,6 +12,7 @@ class AdminDashBoardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
         $data = [
             'total_students' => User::role('student')->count(),
             'total_courses' => Course::count(),
@@ -24,11 +25,18 @@ class AdminDashBoardController extends Controller
             'recent_enrollments' => DB::table('course_user')
                                     ->join('users', 'course_user.user_id', '=', 'users.id')
                                     ->join('courses', 'course_user.course_id', '=', 'courses.id')
-                                    ->select('users.name as student_name', 'courses.title as course_title', 'course_user.created_at')
+                                    ->select('users.name as student_name', 'users.profile_photo_path as student_image', 'courses.title as course_title', 'course_user.created_at')
                                     ->latest('course_user.created_at')
                                     ->take(5)
                                     ->get()
         ];
+
+        if ($user->hasRole('student')) {
+            $data['my_enrolled_courses_count'] = $user->courses()->count();
+            $data['my_completed_courses_count'] = $user->courses()->wherePivot('status', 'completed')->count();
+            $data['my_certificates_count'] = $user->certificates()->count();
+            $data['my_recent_courses'] = $user->courses()->latest()->take(3)->get();
+        }
 
         return view('backend.dashboard', $data);
     }

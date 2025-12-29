@@ -145,6 +145,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Payment History
         Route::get('payments', [App\Http\Controllers\Admin\AdminPaymentController::class, 'index'])->name('payments.index');
+
+        // Admin Profile Routes
+        Route::get('profile', [App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('profile', [App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('profile.update');
+        Route::delete('profile', [App\Http\Controllers\Admin\AdminProfileController::class, 'destroy'])->name('profile.destroy');
     });
 });
 

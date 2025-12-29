@@ -27,10 +27,22 @@
                     {{-- Name Section --}}
                     <div class="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
                         <label class="block text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                            Name
+                            User Profile
                         </label>
-                        <div class="flex items-center">
-                            <span class="text-lg font-bold text-gray-900">{{ $user->name }}</span>
+                        <div class="flex items-center gap-4">
+                            <div class="h-16 w-16 rounded-2xl bg-indigo-100 border-2 border-white shadow-sm overflow-hidden flex-shrink-0">
+                                @if($user->profile_photo_path)
+                                    <img src="{{ Storage::url($user->profile_photo_path) }}" alt="{{ $user->name }}" class="h-full w-full object-cover">
+                                @else
+                                    <div class="h-full w-full flex items-center justify-center text-2xl font-bold text-indigo-600">
+                                        {{ substr($user->name, 0, 1) }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                <span class="text-xl font-bold text-gray-900 block">{{ $user->name }}</span>
+                                <span class="text-sm font-medium text-gray-500">Member since {{ $user->created_at->format('M d, Y') }}</span>
+                            </div>
                         </div>
                     </div>
 

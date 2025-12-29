@@ -37,8 +37,12 @@
                         </td>
                         <td class="px-8 py-5">
                             <div class="flex items-center">
-                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-sm font-bold shadow-sm group-hover:scale-110 transition-transform">
-                                    {{ substr($payment->user->name ?? 'U', 0, 1) }}
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-sm font-bold shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
+                                    @if($payment->user->profile_photo_path)
+                                        <img src="{{ Storage::url($payment->user->profile_photo_path) }}" alt="" class="h-full w-full object-cover">
+                                    @else
+                                        {{ substr($payment->user->name ?? 'U', 0, 1) }}
+                                    @endif
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-bold text-gray-900">{{ $payment->user->name ?? 'Unknown User' }}</div>

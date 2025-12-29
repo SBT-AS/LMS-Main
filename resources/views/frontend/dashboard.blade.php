@@ -151,7 +151,7 @@
                                 <i class="bi bi-award"></i> Certificates
                             </a>
                             <a href="{{ route('profile.edit') }}" class="nav-link-dashboard">
-                                <i class="bi bi-gear"></i> Settings
+                                <i class="bi bi-gear"></i> Profile Settings
                             </a>
                             <div class="border-top my-2 mx-3 border-secondary border-opacity-10"></div>
                             <form method="POST" action="{{ route('logout') }}" id="logout-menu-form">

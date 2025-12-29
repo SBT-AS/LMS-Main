@@ -16,10 +16,12 @@
                class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 text-sm font-semibold transition-all flex items-center gap-2">
                 <i class="bi bi-arrow-left"></i> Back to Courses
             </a>
+            @if(auth()->user()->can('quizzes.create'))
             <a href="{{ route('admin.courses.quizzes.create', $course) }}"
                class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:shadow-lg text-sm font-semibold transition-all flex items-center gap-2">
                 <i class="bi bi-plus-lg"></i> Create Quiz
             </a>
+            @endif
         </div>
     </div>
 
@@ -77,10 +79,13 @@
                         @endif
 
                         <div class="flex gap-2">
+                            @if(auth()->user()->can('quizzes.edit'))
                             <a href="{{ route('admin.courses.quizzes.edit', [$course, $quiz]) }}"
                                class="flex-1 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 text-sm font-semibold text-center transition-all">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
+                            @endif
+
                             <a href="{{ route('admin.courses.quizzes.results', [$course, $quiz]) }}"
                                class="flex-1 px-4 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 text-sm font-semibold text-center transition-all">
                                 <i class="bi bi-bar-chart"></i> Results

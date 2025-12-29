@@ -6,9 +6,24 @@
 <div class="space-y-8 animate-in fade-in duration-500">
     <!-- Welcome Header -->
     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-violet-700 p-8 text-white shadow-lg">
-        <div class="relative z-10">
-            <h1 class="text-3xl font-bold mb-2">Welcome Back, {{ auth()->user()->name }}! 👋</h1>
-            <p class="text-indigo-100 max-w-xl">Your learning ecosystem is thriving. You have <span class="font-bold text-white">{{ $total_students }}</span> students enrolled across <span class="font-bold text-white">{{ $total_courses }}</span> active courses.</p>
+        <div class="relative z-10 flex items-center gap-6">
+            <div class="h-20 w-20 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 p-1 flex-shrink-0">
+                @if(auth()->user()->profile_photo_path)
+                    <img src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover rounded-xl">
+                @else
+                    <div class="h-full w-full flex items-center justify-center text-2xl font-bold">
+                        {{ substr(auth()->user()->name, 0, 1) }}
+                    </div>
+                @endif
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Welcome Back, {{ auth()->user()->name }}! 👋</h1>
+                @if(auth()->user()->hasRole('student'))
+                    <p class="text-indigo-100 max-w-xl">You are currently enrolled in <span class="font-bold text-white">{{ $my_enrolled_courses_count }}</span> courses and have completed <span class="font-bold text-white">{{ $my_completed_courses_count }}</span>. Keep up the great work!</p>
+                @else
+                    <p class="text-indigo-100 max-w-xl">Your learning ecosystem is thriving. You have <span class="font-bold text-white">{{ $total_students }}</span> students enrolled across <span class="font-bold text-white">{{ $total_courses }}</span> active courses.</p>
+                @endif
+            </div>
         </div>
         <!-- Decorative Elements -->
         <div class="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
@@ -18,7 +33,7 @@
             <div class="flex gap-4">
                 <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
                     <div class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Total Revenue</div>
-                    <div class="text-2xl font-bold">${{ number_format($total_revenue, 2) }}</div>
+                    <div class="text-2xl font-bold">₹{{ number_format($total_revenue, 2) }}</div>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
                     <div class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Global Reach</div>
@@ -40,8 +55,13 @@
                     <i class="bi bi-graph-up-arrow mr-1"></i> Active
                 </div>
             </div>
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Students</h3>
-            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_students) }}</div>
+            @if(auth()->user()->hasRole('student'))
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Enrolled Courses</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($my_enrolled_courses_count) }}</div>
+            @else
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Students</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_students) }}</div>
+            @endif
         </div>
 
         <!-- Courses -->
@@ -51,11 +71,16 @@
                     <i class="bi bi-journals text-2xl"></i>
                 </div>
                 <div class="flex items-center text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-lg">
-                    {{ $active_courses }} Active
+                    {{ auth()->user()->hasRole('student') ? 'Learning' : $active_courses . ' Active' }}
                 </div>
             </div>
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Courses</h3>
-            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_courses) }}</div>
+            @if(auth()->user()->hasRole('student'))
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Recent Course</h3>
+                <div class="text-xl font-bold text-gray-900 mt-1 truncate">{{ $my_recent_courses->first()->title ?? 'None' }}</div>
+            @else
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Courses</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_courses) }}</div>
+            @endif
         </div>
 
         <!-- Enrollments -->
@@ -65,11 +90,16 @@
                     <i class="bi bi-patch-check-fill text-2xl"></i>
                 </div>
                 <div class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
-                    Real-time
+                    Achievement
                 </div>
             </div>
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Enrollments</h3>
-            <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_enrollments) }}</div>
+            @if(auth()->user()->hasRole('student'))
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Certificates</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($my_certificates_count) }}</div>
+            @else
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Enrollments</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($total_enrollments) }}</div>
+            @endif
         </div>
 
         <!-- Revenue -->
@@ -79,11 +109,16 @@
                     <i class="bi bi-wallet2 text-2xl"></i>
                 </div>
                 <div class="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg">
-                    Withdrawal
+                    {{ auth()->user()->hasRole('student') ? 'Progress' : 'Withdrawal' }}
                 </div>
             </div>
-            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Earnings</h3>
-            <div class="text-3xl font-bold text-gray-900 mt-1">${{ number_format($total_revenue, 2) }}</div>
+            @if(auth()->user()->hasRole('student'))
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Completed Courses</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($my_completed_courses_count) }}</div>
+            @else
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Earnings</h3>
+                <div class="text-3xl font-bold text-gray-900 mt-1">₹{{ number_format($total_revenue, 2) }}</div>
+            @endif
         </div>
     </div>
 
@@ -114,9 +149,14 @@
                             <tr class="hover:bg-gray-50/50 transition-colors group">
                                 <td class="px-8 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-sm group-hover:scale-110 transition-transform">
+                                        
+                                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
+                                        @if($enrollment->student_image)
+                                            <img src="{{ Storage::url($enrollment->student_image) }}" alt="" class="h-full w-full object-cover">
+                                        @else
                                             {{ substr($enrollment->student_name, 0, 1) }}
-                                        </div>
+                                        @endif
+                                    </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-bold text-gray-900">{{ $enrollment->student_name }}</div>
                                             <div class="text-xs text-gray-400">Student ID #{{ rand(1000, 9999) }}</div>
@@ -186,8 +226,12 @@
                 <div class="divide-y divide-gray-50">
                     @forelse($recent_students as $student)
                     <div class="px-6 py-4 flex items-center hover:bg-gray-50/50 transition-colors group">
-                        <div class="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold ring-4 ring-emerald-50 group-hover:scale-110 transition-transform">
-                            {{ substr($student->name, 0, 1) }}
+                        <div class="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold ring-4 ring-emerald-50 group-hover:scale-110 transition-transform overflow-hidden">
+                            @if($student->profile_photo_path)
+                                <img src="{{ Storage::url($student->profile_photo_path) }}" alt="" class="h-full w-full object-cover">
+                            @else
+                                {{ substr($student->name, 0, 1) }}
+                            @endif
                         </div>
                         <div class="ml-3 flex-grow min-w-0">
                             <h4 class="text-sm font-bold text-gray-900 truncate">{{ $student->name }}</h4>
@@ -206,34 +250,7 @@
                 </div>
             </div>
 
-            <!-- Platform Pulse -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">Platform Pulse</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-indigo-50/50">
-                        <div class="flex items-center">
-                            <div class="h-8 w-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
-                                <i class="bi bi-cpu"></i>
-                            </div>
-                            <span class="ml-3 text-xs font-bold text-gray-600">Server Health</span>
-                        </div>
-                        <span class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-violet-50/50 text-xs font-bold text-gray-600">
-                        <div class="flex items-center">
-                            <div class="h-8 w-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center">
-                                <i class="bi bi-clock"></i>
-                            </div>
-                            <span class="ml-3">Last Backup</span>
-                        </div>
-                        <span>2h ago</span>
-                    </div>
-                    <div class="p-4 rounded-3xl bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100/50">
-                        <div class="text-[10px] text-indigo-400 uppercase font-extrabold mb-1 tracking-widest">Current Session</div>
-                        <div class="text-sm font-mono text-indigo-900">{{ now()->format('H:i') }} <span class="text-[10px] text-indigo-400 font-sans tracking-normal">GTM+5:30</span></div>
-                    </div>
-                </div>
-            </div>
+           
         </div>
     </div>
 </div>

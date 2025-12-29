@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\CourseMaterial;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
+use App\Http\Requests\Admin\CourseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -78,67 +79,8 @@ class CourseController extends Controller
     /* =======================
         STORE COURSE
     ========================*/
-    public function store(Request $request)
+    public function store(CourseRequest $request)
     {
-        /* =======================
-            VALIDATION RULES
-        ========================*/
-        $rules = [
-            'title'       => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price'       => 'required|numeric|min:0',
-            'status'      => 'required|boolean',
-            'live_class_link' => 'required_if:live_class,1|nullable|url',
-        ];
-    
-        // ✅ Include Study Material = YES
-        if ($request->include_material == 1) {
-            $rules['materials'] = 'required|array|min:1';
-            $rules['materials.*.title'] = 'required|string|max:255';
-            $rules['materials.*.type'] = 'required|in:file,url';
-            $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400'; // Max 100MB
-            $rules['materials.*.url']  = 'required_if:materials.*.type,url|nullable|url';
-        }
-    
-        // ✅ Include Quiz = YES
-        if ($request->include_quiz == 1) {
-            $rules['quizzes'] = 'required|array|min:1';
-            $rules['quizzes.*.title'] = 'required|string|max:255';
-            $rules['quizzes.*.duration'] = 'required|integer|min:1';
-    
-            $rules['quizzes.*.questions'] = 'required|array|min:1';
-            $rules['quizzes.*.questions.*.text'] = 'required|string';
-            $rules['quizzes.*.questions.*.options'] = 'required|array|size:4';
-            $rules['quizzes.*.questions.*.correct'] = 'required|in:1,2,3,4';
-        }
-         // ✅ live class = YES
-         if ($request->live_class == 1) {
-            $rules['live_class_link'] =  'required_if:live_class,1|nullable|url';
-        }
-    
-        /* =======================
-            CUSTOM ATTRIBUTE NAMES
-            (THIS FIXES UGLY ERRORS)
-        ========================*/
-        $attributes = [
-            'title' => 'Course Title',
-            'category_id' => 'Category',
-            'price' => 'Price',
-            'status' => 'Status',
-    
-            'materials.*.title' => 'Material Title',
-            'materials.*.type' => 'Material Type',
-            'materials.*.file' => 'Material File',
-            'materials.*.url'  => 'Material URL',
-    
-            'quizzes.*.title' => 'Quiz Title',
-            'quizzes.*.duration' => 'Quiz Duration',
-            'quizzes.*.questions.*.text' => 'Question',
-            'quizzes.*.questions.*.options' => 'Question Options',
-            'quizzes.*.questions.*.correct' => 'Correct Answer',
-        ];
-    
-        $request->validate($rules, [], $attributes);
     
         /* =======================
             STORE DATA
@@ -248,63 +190,8 @@ class CourseController extends Controller
     /* =======================
     UPDATE COURSE
 =======================*/
-public function update(Request $request, Course $course)
+public function update(CourseRequest $request, Course $course)
 {
-    /* =======================
-        VALIDATION RULES
-    ========================*/
-    $rules = [
-        'title'       => 'required|string|max:255',
-        'category_id' => 'required|exists:categories,id',
-        'price'       => 'required|numeric|min:0',
-        'status'      => 'required|boolean',
-        'live_class_link' => 'required_if:live_class,1|nullable|url',
-    ];
-
-    // ✅ Include Study Material = YES
-    if ($request->include_material == 1) {
-        $rules['materials'] = 'required|array|min:1';
-        $rules['materials.*.title'] = 'required|string|max:255';
-        $rules['materials.*.type'] = 'required|in:file,url';
-        $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400';
-        $rules['materials.*.url']  = 'required_if:materials.*.type,url|nullable|url';
-    }
-
-    // ✅ Include Quiz = YES
-    if ($request->include_quiz == 1) {
-        $rules['quizzes'] = 'required|array|min:1';
-        $rules['quizzes.*.title'] = 'required|string|max:255';
-        $rules['quizzes.*.duration'] = 'required|integer|min:1';
-
-        $rules['quizzes.*.questions'] = 'required|array|min:1';
-        $rules['quizzes.*.questions.*.text'] = 'required|string';
-        $rules['quizzes.*.questions.*.options'] = 'required|array|size:4';
-        $rules['quizzes.*.questions.*.correct'] = 'required|in:1,2,3,4';
-    }
-
-    /* =======================
-        CLEAN ATTRIBUTE NAMES
-    ========================*/
-    $attributes = [
-        'title' => 'Course Title',
-        'category_id' => 'Category',
-        'price' => 'Price',
-        'status' => 'Status',
-
-        'materials.*.title' => 'Material Title',
-        'materials.*.type' => 'Material Type',
-        'materials.*.file' => 'Material File',
-        'materials.*.url'  => 'Material URL',
-
-        'quizzes.*.title' => 'Quiz Title',
-        'quizzes.*.duration' => 'Quiz Duration',
-        'quizzes.*.questions.*.text' => 'Question',
-        'quizzes.*.questions.*.options' => 'Question Options',
-        'quizzes.*.questions.*.correct' => 'Correct Answer',
-    ];
-
-    $request->validate($rules, [], $attributes);
-
     /* =======================
         UPDATE DATA
     ========================*/
