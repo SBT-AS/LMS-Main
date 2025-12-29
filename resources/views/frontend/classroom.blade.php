@@ -414,8 +414,7 @@
                                         $videoId = $match[1];
                                     }
                                 @endphp
-                                @if($videoId)
-                                    <iframe src="https://www.youtube.com/embed/{{ $videoId }}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                @if($videoId)<iframe src="https://www.youtube.com/embed/{{ $videoId }}?rel=0&modestbranding=1&controls=1&fs=0&disablekb=1&iv_load_policy=3&playsinline=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 @else
                                     <iframe src="{{ $currentMaterial->url }}" frameborder="0" allowfullscreen></iframe>
                                 @endif
