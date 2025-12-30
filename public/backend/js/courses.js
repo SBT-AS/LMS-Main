@@ -345,16 +345,14 @@ const CourseEditor = {
     },
 
     removeQuestion: function (button, quizIndex) {
-        if (confirm('Are you sure you want to remove this question?')) {
-            const container = button.closest('.space-y-4');
-            button.closest('.question-card').remove();
+        const container = button.closest('.space-y-4');
+        button.closest('.question-card').remove();
 
-            this.reorderQuestions(container);
+        this.reorderQuestions(container);
 
-            // Update tracking
-            if (this.questionCounts[quizIndex]) {
-                this.questionCounts[quizIndex]--;
-            }
+        // Update tracking
+        if (this.questionCounts[quizIndex]) {
+            this.questionCounts[quizIndex]--;
         }
     },
 

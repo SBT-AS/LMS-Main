@@ -11,6 +11,49 @@
         --glass-border: rgba(48, 54, 61, 0.6);
     }
 
+    /* Fancybox Customization */
+    .fancybox__container {
+        --fancybox-bg: rgba(6, 9, 15, 0.95);
+    }
+    
+    .fancybox__toolbar {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    .image-zoom-container {
+        position: relative;
+        cursor: zoom-in;
+        transition: transform 0.3s ease;
+    }
+
+    .image-zoom-container:hover {
+        transform: scale(1.01);
+    }
+
+    .zoom-hint {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(16, 185, 129, 0.9);
+        color: #000;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .image-zoom-container:hover .zoom-hint {
+        opacity: 1;
+    }
+
     /* Forcefully prevent selection on everything */
     * {
         -webkit-user-select: none !important;
@@ -311,6 +354,7 @@
         body { overflow: auto; }
     }
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
 @endpush
 
 @section('content')
@@ -430,8 +474,13 @@
                              <iframe src="{{ asset('storage/' . $currentMaterial->file_path) }}#toolbar=0" width="100%" height="100%" style="border: none;"></iframe>
                         </div>
                     @elseif($currentMaterial->material_type == 'image')
-                        <div class="text-center p-4 d-flex align-items-center justify-content-center" style="min-height: 500px; background: rgba(0,0,0,0.3);">
-                            <img src="{{ asset('storage/' . $currentMaterial->file_path) }}" class="img-fluid rounded-3 shadow-lg" style="max-height: 450px; width: auto;" alt="{{ $currentMaterial->title }}">
+                        <div class="text-center p-4 d-flex align-items-center justify-content-center" style="min-height: 600px; background: radial-gradient(circle, rgba(22, 27, 34, 0.5) 0%, rgba(6, 9, 15, 0.8) 100%); border-radius: 12px;">
+                            <div class="image-zoom-container" data-fancybox="gallery" data-src="{{ asset('storage/' . $currentMaterial->file_path) }}" data-caption="{{ $currentMaterial->title }}">
+                                <img src="{{ asset('storage/' . $currentMaterial->file_path) }}" class="img-fluid rounded-3 shadow-lg border border-secondary border-opacity-10" style="max-height: 550px; width: auto; object-fit: contain;" alt="{{ $currentMaterial->title }}">
+                                <div class="zoom-hint">
+                                    <i class="bi bi-arrows-fullscreen"></i> CLICK TO ENLARGE
+                                </div>
+                            </div>
                         </div>
                     @else
                         <div class="text-center py-5">
@@ -500,8 +549,24 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Fancybox
+        Fancybox.bind("[data-fancybox]", {
+            // Your custom options
+            Toolbar: {
+                display: {
+                    left: ["infobar"],
+                    middle: [],
+                    right: ["iterateZoom", "close"],
+                },
+            },
+            Images: {
+                initialSize: "fit",
+            },
+        });
+
         const searchInput = document.getElementById('materialSearch');
         const items = document.querySelectorAll('.material-item');
         const groups = document.querySelectorAll('.material-group');

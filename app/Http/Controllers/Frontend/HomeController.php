@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -18,7 +19,7 @@ class HomeController extends Controller
         if ($request->has('category_id') && $request->category_id != '') {
             $query->where('category_id', $request->category_id);
         }
-
+        
         $featuredCourses = $query->latest()
             ->limit(6)
             ->get();
@@ -28,7 +29,8 @@ class HomeController extends Controller
         }
 
         $categories = Category::withCount('courses')->get();
+        $studentCount = User::role('student')->count();
 
-        return view('frontend.home', compact('featuredCourses', 'categories'));
+        return view('frontend.home', compact('featuredCourses', 'categories', 'studentCount'));
     }
 }

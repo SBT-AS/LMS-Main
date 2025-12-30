@@ -34,7 +34,7 @@ class CourseRequest extends FormRequest
             $rules['materials'] = 'required|array|min:1';
             $rules['materials.*.title'] = 'required|string|max:255';
             $rules['materials.*.type'] = 'required|in:file,url';
-            $rules['materials.*.material_type'] = 'required|in:video,pdf,doc,url,other';
+            $rules['materials.*.material_type'] = 'required|in:video,pdf,doc,image,url,other';
             
             if ($this->isMethod('POST')) {
                 $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400';

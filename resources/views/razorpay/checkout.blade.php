@@ -211,6 +211,7 @@
               <div class="mb-3">
                   <label for="upi_id" class="form-label text-muted small">UPI ID / VPA</label>
                   <input type="text" class="form-control form-control-lg" id="user_upi_id" name="upi_id" form="dummy-upi-form" placeholder="e.g. user@upi" required>
+                  <div id="upi-error-msg" class="text-danger small mt-1" style="display: none;">Invalid UPI ID. Please use success@razorpay or failed.</div>
                   <div class="invalid-feedback">Please enter a valid UPI ID.</div>
               </div>
               <div class="d-grid gap-2">
@@ -237,7 +238,7 @@
 <!-- Dummy UPI Form -->
 <form action="{{ route('razorpay.payment.dummy') }}" method="POST" id="dummy-upi-form" style="display: none;">
     @csrf
-    <!-- Input is linked via 'form' attribute in the modal -->
+    <input type="hidden" name="upi_status" id="upi_status">
 </form>
 
 <!-- Razorpay Script -->
@@ -302,11 +303,11 @@
         var myModalEl = document.getElementById('paymentMethodModal');
         var modal = bootstrap.Modal.getInstance(myModalEl);
         modal.hide();
-
+ 
         // Open Razorpay
         rzp1.open();
     }
-
+ 
     // Function to handle UPI payment (Show Input)
     function proceedWithUPI() {
         var optionsDiv = document.querySelector('.modal-body .d-grid');
@@ -316,7 +317,7 @@
         optionsDiv.style.display = 'none';
         inputForm.style.display = 'block';
     }
-
+ 
     // Back to options
     function backToOptions() {
         var optionsDiv = document.querySelector('.modal-body .d-grid');
@@ -325,14 +326,33 @@
         inputForm.style.display = 'none';
         optionsDiv.style.display = 'grid'; // Restore grid layout
     }
-
+ 
     // Confirm and Pay
     function confirmUPIPayment() {
         var upiInput = document.getElementById('user_upi_id');
-        if(!upiInput.value.trim()) {
-            alert("Please enter a UPI ID");
+        var errorMsg = document.getElementById('upi-error-msg');
+        var upiValue = upiInput.value.trim();
+
+        if(!upiValue) {
+            errorMsg.innerText = "Please enter a UPI ID";
+            errorMsg.style.display = 'block';
             return;
         }
+
+        if(upiValue === 'success@razorpay') {
+            document.getElementById('upi_status').value = 'success';
+        } else if(upiValue === 'failed' || upiValue === 'feid') {
+            document.getElementById('upi_status').value = 'failed';
+        } else {
+            errorMsg.innerText = "Please use success@razorpay or failed";
+            errorMsg.style.display = 'block';
+            upiInput.classList.add('is-invalid');
+            return;
+        }
+
+        // Reset error message if valid
+        errorMsg.style.display = 'none';
+        upiInput.classList.remove('is-invalid');
 
         // Show processing
         var inputForm = document.getElementById('upi-input-form');

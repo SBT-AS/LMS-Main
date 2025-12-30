@@ -111,6 +111,12 @@ class RazorpayController extends Controller
             return redirect()->route('login');
         }
 
+        $upiStatus = $request->input('upi_status');
+        
+        if ($upiStatus === 'failed') {
+            return redirect()->route('cart.index')->with('error', 'UPI Payment failed. Please try again with a valid mock ID.');
+        }
+
         // Generate Dummy IDs
         // Use user provided UPI ID if available to simulate a real transaction ID involving their VPA
         $upiId = $request->input('upi_id', 'unknown_upi');

@@ -275,7 +275,7 @@
                     </div>
                     <div class="card-body p-4">
                          <p class="text-muted small">Once your account is deleted, all of its resources and data will be permanently deleted.</p>
-                         <button type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                         <button type="button" class="btn btn-outline-danger rounded-pill px-4" onclick="confirmAccountDeletion()">
                             Delete Account
                          </button>
                     </div>
@@ -286,33 +286,77 @@
     </div>
 </div>
 
-<!-- Delete Account Modal -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <form method="post" action="{{ route('profile.destroy') }}" class="modal-content text-dark">
-        @csrf
-        @method('delete')
-      <div class="modal-header">
-        <h5 class="modal-title">Delete Account</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-        <div class="mb-3">
-            <label for="password_delete" class="form-label">Password</label>
-            <input type="password" class="form-control @error('password', 'userDeletion') is-invalid @enderror" id="password_delete" name="password" placeholder="Enter your password to confirm">
-             @error('password', 'userDeletion')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-danger">Delete Account</button>
-      </div>
-    </form>
-  </div>
-</div>
+<!-- Hidden Delete Form -->
+<form id="delete-account-form-frontend" method="POST" action="{{ route('profile.destroy') }}" class="d-none">
+    @csrf
+    @method('delete')
+    <input type="password" name="password" id="confirm_password_field_frontend">
+</form>
+
+@push('scripts')
+<script>
+    function confirmAccountDeletion() {
+        Swal.fire({
+            title: '<h3 class="text-2xl font-bold text-white mt-3">Delete Account?</h3>',
+            html: `
+                <div class="text-center px-2">
+                    <p class="text-white-50 mb-4">This action is <b>permanent</b> and cannot be undone. All your data will be removed. Please enter your password to confirm.</p>
+                </div>
+            `,
+            icon: 'warning',
+            iconColor: '#dc3545',
+            input: 'password',
+            inputPlaceholder: 'Enter your password',
+            showCancelButton: true,
+            confirmButtonText: 'Delete Permanently',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: '#1a1d21',
+            color: '#ffffff',
+            customClass: {
+                popup: 'rounded-5 border border-secondary border-opacity-10 shadow-lg',
+                confirmButton: 'btn btn-danger px-4 py-2 rounded-pill fw-bold ms-3',
+                cancelButton: 'btn btn-link text-secondary text-decoration-none px-4 py-2 fw-bold',
+                input: 'form-control border-0 bg-dark bg-opacity-50 text-white text-center py-3 rounded-4 mt-2 mb-3 mx-auto w-75 border border-secondary border-opacity-20'
+            },
+            buttonsStyling: false,
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if (!password) {
+                    Swal.showValidationMessage('Password is required');
+                    return false;
+                }
+                return password;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('confirm_password_field_frontend').value = result.value;
+                document.getElementById('delete-account-form-frontend').submit();
+            }
+        });
+    }
+
+    @if($errors->userDeletion->has('password'))
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: '<span class="text-white">Validation Error</span>',
+                text: '{{ $errors->userDeletion->first("password") }}',
+                background: '#1a1d21',
+                color: '#ffffff',
+                confirmButtonText: 'Try Again',
+                customClass: {
+                    popup: 'rounded-4 border border-secondary border-opacity-10',
+                    confirmButton: 'btn btn-primary px-4 py-2 rounded-pill fw-bold'
+                },
+                buttonsStyling: false
+            }).then(() => {
+                confirmAccountDeletion();
+            });
+        });
+    @endif
+</script>
+@endpush
 
 <form id="send-verification" method="post" action="{{ route('verification.send') }}">
     @csrf

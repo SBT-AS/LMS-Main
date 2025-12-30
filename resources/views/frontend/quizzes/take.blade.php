@@ -31,6 +31,13 @@
         border-color: #10b981;
         box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
     }
+    .timer-pulse {
+        animation: pulse-red 1s infinite alternate;
+    }
+    @keyframes pulse-red {
+        from { transform: scale(1); text-shadow: 0 0 0px rgba(220, 53, 69, 0); }
+        to { transform: scale(1.1); text-shadow: 0 0 10px rgba(220, 53, 69, 0.5); }
+    }
 </style>
 @endpush
 
@@ -95,22 +102,6 @@
     </div>
 </div>
 
-<!-- Submit Confirmation Modal -->
-<div class="modal fade" id="submitModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content card-glass border-0">
-            <div class="modal-body p-4 text-center">
-                <i class="bi bi-question-circle display-1 text-primary mb-4 d-block"></i>
-                <h4 class="fw-bold text-white">Submit your quiz?</h4>
-                <p class="text-muted mb-4">You still have time remaining. Please double-check your answers if needed.</p>
-                <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Go Back</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4" id="confirm-submit">Yes, Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -122,15 +113,25 @@
         const nextBtns = document.querySelectorAll('.next-question');
         const prevBtns = document.querySelectorAll('.prev-question');
         const submitBtn = document.querySelector('.submit-quiz');
-        const confirmSubmitBtn = document.getElementById('confirm-submit');
-        const submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
 
         // Navigation
         nextBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const currentInputs = cards[currentQuestion].querySelectorAll('input[type="radio"]:checked');
                 if (currentInputs.length === 0) {
-                    alert('Please select an answer before proceeding.');
+                    Swal.fire({
+                        icon: 'info',
+                        title: '<span class="text-white">Note</span>',
+                        text: 'Please select an answer before proceeding.',
+                        background: '#1a1d21',
+                        color: '#ffffff',
+                        confirmButtonText: 'Got it',
+                        customClass: {
+                            popup: 'rounded-4 border border-secondary border-opacity-10',
+                            confirmButton: 'btn btn-primary px-4 py-2 rounded-pill fw-bold'
+                        },
+                        buttonsStyling: false
+                    });
                     return;
                 }
                 cards[currentQuestion].classList.remove('active');
@@ -150,18 +151,47 @@
         submitBtn.addEventListener('click', () => {
             const currentInputs = cards[currentQuestion].querySelectorAll('input[type="radio"]:checked');
             if (currentInputs.length === 0) {
-                alert('Please select an answer for the last question.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '<span class="text-white">Oops!</span>',
+                    text: 'Please select an answer for the last question.',
+                    background: '#1a1d21',
+                    color: '#ffffff',
+                    confirmButtonText: 'Got it',
+                    customClass: {
+                        popup: 'rounded-4 border border-secondary border-opacity-10',
+                        confirmButton: 'btn btn-primary px-4 py-2 rounded-pill fw-bold'
+                    },
+                    buttonsStyling: false
+                });
                 return;
             }
-            submitModal.show();
-        });
-
-        confirmSubmitBtn.addEventListener('click', () => {
-            document.getElementById('quiz-form').submit();
+            
+            Swal.fire({
+                title: '<h3 class="text-2xl font-bold text-white mt-3">Submit Quiz?</h3>',
+                html: '<p class="text-white-50">You still have time remaining. Are you sure you want to finish?</p>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Submit Now',
+                cancelButtonText: 'Not Yet',
+                reverseButtons: true,
+                background: '#1a1d21',
+                color: '#ffffff',
+                customClass: {
+                    popup: 'rounded-5 border border-secondary border-opacity-10 shadow-lg',
+                    confirmButton: 'btn btn-primary px-4 py-2 rounded-pill fw-bold ms-3',
+                    cancelButton: 'btn btn-link text-secondary text-decoration-none px-4 py-2 fw-bold'
+                },
+                buttonsStyling: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('quiz-form').submit();
+                }
+            });
         });
 
         // Timer
-        let duration = {{ $quiz->duration * 60 }};
+        let duration = {{ ($quiz->duration ?? 0) * 60 }};
         const timerDisplay = document.getElementById('quiz-timer');
 
         function startTimer() {
@@ -176,12 +206,34 @@
 
                 if (--duration < 0) {
                     clearInterval(timer);
-                    alert('Time is up! Your quiz will be submitted automatically.');
-                    document.getElementById('quiz-form').submit();
+                    Swal.fire({
+                        title: '<h3 class="text-2xl font-bold text-white mt-3">Time\'s Up!</h3>',
+                        html: '<p class="text-white-50">Your session has ended. Your quiz is being submitted automatically.</p>',
+                        icon: 'info',
+                        iconColor: '#dc3545',
+                        background: '#1a1d21',
+                        color: '#ffffff',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-5 border border-secondary border-opacity-10 shadow-lg',
+                        },
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    }).then(() => {
+                        document.getElementById('quiz-form').submit();
+                    });
                 }
                 
-                if (duration < 60) {
+                if (duration <= 10) {
+                    timerDisplay.classList.add('text-danger', 'timer-pulse');
+                    timerDisplay.classList.remove('text-accent');
+                } else if (duration <= 60) {
                     timerDisplay.classList.add('text-danger');
+                    timerDisplay.classList.remove('text-accent');
                 }
             }, 1000);
         }

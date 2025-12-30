@@ -183,11 +183,47 @@
 
 <script>
     function confirmDelete() {
-        const password = prompt("Please enter your password to confirm account deletion:");
-        if (password) {
-            document.getElementById('confirm_password_field').value = password;
-            document.getElementById('delete-profile-form').submit();
-        }
+        Swal.fire({
+            title: '<h3 class="text-2xl font-bold text-red-600">Delete Account?</h3>',
+            html: `
+                <div class="text-left space-y-4">
+                    <p class="text-gray-600">This action is <b>permanent</b> and cannot be undone. All your data will be removed.</p>
+                    <p class="text-sm font-medium text-gray-700">Please enter your password to confirm:</p>
+                </div>
+            `,
+            input: 'password',
+            inputPlaceholder: 'Enter your password',
+            inputAttributes: {
+                autocapitalize: 'off',
+                autocorrect: 'off',
+                class: 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-red-500 outline-none mt-2'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Delete Permanently',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-3xl border-0 shadow-2xl',
+                confirmButton: 'px-8 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition-all ml-3',
+                cancelButton: 'px-8 py-3 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all'
+            },
+            buttonsStyling: false,
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if (!password) {
+                    Swal.showValidationMessage('Password is required to delete your account');
+                    return false;
+                }
+                return password;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('confirm_password_field').value = result.value;
+                document.getElementById('delete-profile-form').submit();
+            }
+        });
     }
 </script>
 @endsection

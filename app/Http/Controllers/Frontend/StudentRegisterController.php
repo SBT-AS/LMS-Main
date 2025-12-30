@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
 
 class StudentRegisterController extends Controller
 {
@@ -28,6 +30,9 @@ class StudentRegisterController extends Controller
 
         // Assign student role
         $user->assignRole('student');
+
+        // Send Welcome Email
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         event(new Registered($user));
 

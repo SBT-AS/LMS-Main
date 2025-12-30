@@ -476,9 +476,27 @@ $(function () {
 
     $('#bulkDelete').on('click', function() {
         if (selectedCourses.length > 0) {
-            if (confirm('Are you sure you want to delete ' + selectedCourses.length + ' course(s)?')) {
-                bulkAction('delete', selectedCourses);
-            }
+            Swal.fire({
+                title: 'Delete ' + selectedCourses.length + ' Course(s)?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete them!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-6 py-2 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 ml-3',
+                    cancelButton: 'px-6 py-2 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    bulkAction('delete', selectedCourses);
+                }
+            });
         }
     });
 

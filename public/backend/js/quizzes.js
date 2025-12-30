@@ -86,11 +86,9 @@ const QuizEditor = {
     },
 
     removeQuestion: function (index) {
-        if (confirm('Are you sure you want to remove this question?')) {
-            const questionDiv = document.getElementById(`question-${index}`);
-            if (questionDiv) {
-                questionDiv.remove();
-            }
+        const questionDiv = document.getElementById(`question-${index}`);
+        if (questionDiv) {
+            questionDiv.remove();
         }
     }
 };

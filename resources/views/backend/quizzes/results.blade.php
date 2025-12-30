@@ -26,13 +26,20 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm mb-1">Total Attempts</p>
-                <p class="text-2xl font-bold text-indigo-600">{{ $attempts->count() }}</p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-2xl font-bold text-indigo-600">{{ $attempts->count() }}</p>
+                    @php $inProgress = $attempts->where('completed_at', null)->count(); @endphp
+                    @if($inProgress > 0)
+                        <span class="text-xs text-orange-500 font-medium">({{ $inProgress }} in progress)</span>
+                    @endif
+                </div>
             </div>
             <div>
                 <p class="text-gray-500 text-sm mb-1">Average Score</p>
                 <p class="text-2xl font-bold text-green-600">
-                    @if($attempts->count() > 0)
-                        {{ number_format($attempts->avg('score'), 1) }}/{{ $quiz->questions->count() }}
+                    @php $completedAttempts = $attempts->whereNotNull('completed_at'); @endphp
+                    @if($completedAttempts->count() > 0)
+                        {{ number_format($completedAttempts->avg('score'), 1) }}/{{ $quiz->questions->count() }}
                     @else
                         N/A
                     @endif
@@ -41,8 +48,8 @@
             <div>
                 <p class="text-gray-500 text-sm mb-1">Pass Rate</p>
                 <p class="text-2xl font-bold text-purple-600">
-                    @if($attempts->count() > 0)
-                        {{ number_format($attempts->filter(fn($a) => $a->getPercentageScore() >= 70)->count() / $attempts->count() * 100, 1) }}%
+                    @if($completedAttempts->count() > 0)
+                        {{ number_format($completedAttempts->filter(fn($a) => $a->getPercentageScore() >= 70)->count() / $completedAttempts->count() * 100, 1) }}%
                     @else
                         N/A
                     @endif
@@ -95,7 +102,11 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @if($attempt->getPercentageScore() >= 70)
+                                    @if(!$attempt->completed_at)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                                            <i class="bi bi-clock-history mr-1"></i> In Progress
+                                        </span>
+                                    @elseif($attempt->getPercentageScore() >= 70)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
                                             <i class="bi bi-check-circle-fill mr-1"></i> Passed
                                         </span>
@@ -106,7 +117,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">
-                                    {{ $attempt->completed_at->format('M d, Y H:i') }}
+                                    {{ $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : 'In Progress' }}
                                 </td>
                             </tr>
                         @endforeach

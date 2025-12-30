@@ -20,7 +20,7 @@
                 </div>
 
                 <p class="hero-subtitle mb-5 lead text-light">
-                Learn Skills the Right Way – Hands-On, Project-Based, and Expert-Guided. Join 10,000+ Students Today.              </p>
+                Learn Skills the Right Way – Hands-On, Project-Based, and Expert-Guided. Join {{$studentCount}} + Students Today.              </p>
 
                 <!-- Search Bar -->
                 <div class="hero-cta position-relative d-inline-block w-100" style="max-width: 480px;">
