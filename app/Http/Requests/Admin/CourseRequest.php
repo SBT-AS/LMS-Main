@@ -36,10 +36,36 @@ class CourseRequest extends FormRequest
             $rules['materials.*.type'] = 'required|in:file,url';
             $rules['materials.*.material_type'] = 'required|in:video,pdf,doc,image,url,other';
             
-            if ($this->isMethod('POST')) {
-                $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400';
+            if ($this->has('materials')) {
+                foreach ($this->input('materials') as $index => $material) {
+                    $materialType = $material['material_type'] ?? '';
+                    $type = $material['type'] ?? '';
+                    
+                    $fileRule = 'nullable|file|max:102400';
+                    if ($this->isMethod('POST') && $type === 'file') {
+                        $fileRule = 'required|file|max:102400';
+                    }
+                    
+                    if ($type === 'file') {
+                        if ($materialType === 'image') {
+                            $fileRule .= '|image|mimes:jpeg,png,jpg,gif';
+                        } elseif ($materialType === 'video') {
+                            $fileRule .= '|mimetypes:video/mp4,video/quicktime,video/ogg,video/x-matroska,video/webm';
+                        } elseif ($materialType === 'pdf') {
+                            $fileRule .= '|mimes:pdf';
+                        } elseif ($materialType === 'doc') {
+                            $fileRule .= '|mimes:doc,docx,pdf,txt';
+                        }
+                    }
+                    
+                    $rules["materials.{$index}.file"] = $fileRule;
+                }
             } else {
-                $rules['materials.*.file'] = 'nullable|file|max:102400';
+                if ($this->isMethod('POST')) {
+                    $rules['materials.*.file'] = 'required_if:materials.*.type,file|nullable|file|max:102400';
+                } else {
+                    $rules['materials.*.file'] = 'nullable|file|max:102400';
+                }
             }
             
             $rules['materials.*.url'] = 'required_if:materials.*.type,url|nullable|url';
@@ -81,6 +107,9 @@ class CourseRequest extends FormRequest
             'materials.*.type.required' => 'Study Material type is required.',
             'materials.*.material_type.required' => 'Please select a content type (Video/PDF/Doc).',
             'materials.*.file.required_if' => 'Study Material file is required.',
+            'materials.*.file.image' => 'The uploaded file must be an image (jpeg, png, jpg, gif).',
+            'materials.*.file.mimes' => 'The file format does not match the selected content type.',
+            'materials.*.file.mimetypes' => 'The uploaded file must be a valid video format.',
             'materials.*.url.required_if' => 'Study Material URL is required.',
             'materials.*.url.url' => 'Study Material URL must be a valid URL.',
             

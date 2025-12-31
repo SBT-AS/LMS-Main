@@ -145,7 +145,7 @@ class RazorpayController extends Controller
         ]);
 
         foreach ($cartItems as $item) {
-            // Enroll user in course if not already enrolled
+            
             if (!$user->courses->contains($item->course_id)) {
                 $user->courses()->attach($item->course_id, [
                     'enrolled_at' => now(),

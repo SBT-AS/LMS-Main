@@ -51,9 +51,7 @@ class QuizAttempt extends Model
      */
     public function getPercentageScore(): float
     {
-        if ($this->total_questions == 0) {
-            return 0;
-        }
-        return ($this->score / $this->total_questions) * 100;
+        return (float) $this->score;
     }
+
 }

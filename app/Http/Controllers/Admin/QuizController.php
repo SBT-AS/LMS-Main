@@ -8,6 +8,8 @@ use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\QuizAnswer;
+use App\Models\QuizAttempt;
 
 class QuizController extends Controller
 {
@@ -167,16 +169,24 @@ class QuizController extends Controller
         }
     }
 
-    /**
-     * Show quiz attempts/results
-     */
     public function showResults(Course $course, Quiz $quiz)
     {
         $attempts = $quiz->attempts()
-            ->with('user')
+            ->with(['user', 'answers' => function($query) {
+                $query->where('is_correct', true);
+            }])
             ->orderBy('completed_at', 'desc')
             ->get();
+     
+        $totalQuestions = $quiz->questions()->count();
+        
+        $attempts->map(function ($attempt) {
+            $attempt->correct_answers_count = $attempt->answers->count();
+            return $attempt;
+        });
 
-        return view('backend.quizzes.results', compact('course', 'quiz', 'attempts'));
+        return view('backend.quizzes.results', compact('course', 'quiz', 'attempts', 'totalQuestions'));
     }
+
+       
 }

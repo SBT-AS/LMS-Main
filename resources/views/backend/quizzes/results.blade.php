@@ -39,7 +39,7 @@
                 <p class="text-2xl font-bold text-green-600">
                     @php $completedAttempts = $attempts->whereNotNull('completed_at'); @endphp
                     @if($completedAttempts->count() > 0)
-                        {{ number_format($completedAttempts->avg('score'), 1) }}/{{ $quiz->questions->count() }}
+                        {{ number_format($completedAttempts->avg('score'), 1) }}
                     @else
                         N/A
                     @endif
@@ -49,7 +49,7 @@
                 <p class="text-gray-500 text-sm mb-1">Pass Rate</p>
                 <p class="text-2xl font-bold text-purple-600">
                     @if($completedAttempts->count() > 0)
-                        {{ number_format($completedAttempts->filter(fn($a) => $a->getPercentageScore() >= 70)->count() / $completedAttempts->count() * 100, 1) }}%
+                        {{ number_format($completedAttempts->filter(fn($a) => $a->score >= 70)->count() / $completedAttempts->count() * 100, 1) }}%
                     @else
                         N/A
                     @endif
@@ -93,26 +93,22 @@
                                 <td class="px-6 py-4 text-gray-600">{{ $attempt->user->email }}</td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="font-semibold text-gray-800">
-                                        {{ $attempt->score }}/{{ $attempt->total_questions }}
+                                        {{ $attempt->correct_answers_count }}/{{ $attempt->total_questions }}
+                                    </span> 
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="font-bold {{ $attempt->score >= 70 ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ $attempt->score }}%
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="font-bold {{ $attempt->getPercentageScore() >= 70 ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ number_format($attempt->getPercentageScore(), 1) }}%
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    @if(!$attempt->completed_at)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                                            <i class="bi bi-clock-history mr-1"></i> In Progress
-                                        </span>
-                                    @elseif($attempt->getPercentageScore() >= 70)
+                                    @if($attempt->score >= 70)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                            <i class="bi bi-check-circle-fill mr-1"></i> Passed
+                                            Pass
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                            <i class="bi bi-x-circle-fill mr-1"></i> Failed
+                                            Failed
                                         </span>
                                     @endif
                                 </td>

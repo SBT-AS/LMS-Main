@@ -306,6 +306,7 @@
  
         // Open Razorpay
         rzp1.open();
+        
     }
  
     // Function to handle UPI payment (Show Input)
@@ -322,7 +323,6 @@
     function backToOptions() {
         var optionsDiv = document.querySelector('.modal-body .d-grid');
         var inputForm = document.getElementById('upi-input-form');
-        
         inputForm.style.display = 'none';
         optionsDiv.style.display = 'grid'; // Restore grid layout
     }

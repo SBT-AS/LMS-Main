@@ -2,29 +2,10 @@
 let currentCourseId = null;
 
 /* ============================================================
-  PARTIAL LOADING (HEADER & FOOTER)
+  PARTIAL LOADING (REMOVED: Handled by Laravel Blade)
    ============================================================ */
+// Header and Footer are included via @include in app.blade.php
 
-async function loadPartial(id, file) {
-  try {
-    const res = await fetch(file);
-    if (!res.ok) throw new Error(`Failed to load ${file}`);
-    const html = await res.text();
-    const container = document.getElementById(id);
-    if (container) {
-      container.innerHTML = html;
-
-      // If we just loaded the header, we might need to re-initialize Bootstrap components 
-      // if they don't auto-init (Modals usually handle themselves via data-bs attributes)
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// Load shared layout sections
-loadPartial("site-header", "../partials/header.html");
-loadPartial("site-footer", "../partials/footer.html");
 
 
 /* ============================================================
