@@ -54,11 +54,11 @@
                             <div class="space-y-1">
                                 <div class="flex items-center text-xs text-gray-500">
                                     <span class="w-16 font-medium text-gray-400">Payment:</span>
-                                    <span class="font-mono text-gray-700 bg-gray-50 px-1.5 py-0.5 rounded">{{ Str::limit($payment->rwp_payment_id, 14) }}</span>
+                                    <span class="font-mono text-gray-700 bg-gray-50 px-1.5 py-0.5 rounded">{{ Str::limit($payment->rwp_payment_id, 30) }}</span>
                                 </div>
                                 <div class="flex items-center text-xs text-gray-500">
                                     <span class="w-16 font-medium text-gray-400">Order:</span>
-                                    <span class="font-mono text-gray-700 bg-gray-50 px-1.5 py-0.5 rounded">{{ Str::limit($payment->rwp_order_id, 14) }}</span>
+                                    <span class="font-mono text-gray-700 bg-gray-50 px-1.5 py-0.5 rounded">{{ Str::limit($payment->rwp_order_id, 30) }}</span>
                                 </div>
                             </div>
                         </td>

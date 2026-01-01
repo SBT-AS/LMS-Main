@@ -19,7 +19,7 @@ class CourseController extends Controller
 {
    
     /* =======================
-        COURSE LIST (DATATABLE)
+      COURSE LIST (DATATABLE)
     ========================*/
     public function index(Request $request)
     {
